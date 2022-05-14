@@ -24,18 +24,18 @@ public static class DependancyInjectionExtensions
     /// <summary>
     /// Registers <see cref="IResponsePaginator"/> with the container
     /// </summary>
-    /// <param name="applicationConfiguration"></param>
+    /// <param name="options"></param>
     /// <returns>Current <see cref="ApplicationConfiguration"/> instance</returns>
-    public static ApplicationConfiguration AddResponsePaginator(this ApplicationConfiguration applicationConfiguration)
+    public static EfCoreDataServicesConfiguration AddResponseDataPaginator(this EfCoreDataServicesConfiguration options)
     {
-        if (applicationConfiguration.GetType().GetField("Builder", BindingFlags.Instance |
+        if (options.Config.GetType().GetField("Builder", BindingFlags.Instance |
                                                                    BindingFlags.NonPublic |
                                                                    BindingFlags.Public)
-                ?.GetValue(applicationConfiguration) is not ContainerBuilder builder)
+                ?.GetValue(options.Config) is not ContainerBuilder builder)
             throw new InvalidOperationException();
         
         builder.RegisterType<ResponsePaginator>().As<IResponsePaginator>().SingleInstance();
-        return applicationConfiguration;
+        return options;
     }
 
     /// <summary>

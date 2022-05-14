@@ -5,7 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <PackageId>MikyM.Common.EfCore.ApplicationLayer</PackageId>
-    <Version>1.0.0</Version>
+    <Version>1.0.1</Version>
     <Authors>Krzysztof Kupisz</Authors>
     <PackageDescription>Application layer for DDD architecture utilizing MikyM.Common.EfCore.DataAccessLayer package.</PackageDescription>
     <RepositoryUrl>https://github.com/MikyM/MikyM.Common.EfCore.ApplicationLayer</RepositoryUrl>
@@ -20,7 +20,7 @@
     <PackageReference Include="Microsoft.Extensions.Options" Version="6.0.0" />
     <PackageReference Include="MikyM.CommandHandlers" Version="1.0.0" />
     <PackageReference Include="MikyM.Common.ApplicationLayer" Version="1.2.5" />
-    <PackageReference Include="MikyM.Common.EfCore.DataAccessLayer" Version="1.0.2" />
+    <PackageReference Include="MikyM.Common.EfCore.DataAccessLayer" Version="1.0.3" />
   </ItemGroup>
 
 </Project>
