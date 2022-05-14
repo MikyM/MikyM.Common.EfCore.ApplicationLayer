@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using MikyM.Common.ApplicationLayer.Interfaces;
 using MikyM.Common.EfCore.ApplicationLayer.Interfaces;
 using MikyM.Common.EfCore.DataAccessLayer.Repositories;
 using MikyM.Common.EfCore.DataAccessLayer.Specifications;

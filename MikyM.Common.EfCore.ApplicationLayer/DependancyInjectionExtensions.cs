@@ -2,17 +2,12 @@
 using Autofac;
 using Autofac.Builder;
 using Autofac.Extras.DynamicProxy;
-using AutoMapper.Contrib.Autofac.DependencyInjection;
-using AutoMapper.Extensions.ExpressionMapping;
 using Castle.DynamicProxy;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using MikyM.CommandHandlers.Helpers;
 using MikyM.Common.ApplicationLayer;
 using MikyM.Common.EfCore.ApplicationLayer.Interfaces;
 using MikyM.Common.EfCore.ApplicationLayer.Pagination;
 using MikyM.Common.EfCore.ApplicationLayer.Services;
-using MikyM.Common.Utilities;
 
 namespace MikyM.Common.EfCore.ApplicationLayer;
 
@@ -44,7 +39,7 @@ public static class DependancyInjectionExtensions
     /// <param name="applicationConfiguration">Application config</param>
     /// <param name="options">Configuration action for data services</param>
     /// <returns>Current <see cref="ApplicationConfiguration"/> instance</returns>
-    public static ApplicationConfiguration AddEfCoreDataServices(this ApplicationConfiguration applicationConfiguration, Action<EfCoreDataServicesConfiguration> options)
+    public static ApplicationConfiguration AddEfCoreDataServices(this ApplicationConfiguration applicationConfiguration, Action<EfCoreDataServicesConfiguration>? options = null)
     {
         if (applicationConfiguration.GetType().GetField("Builder", BindingFlags.Instance |
                                                                    BindingFlags.NonPublic |

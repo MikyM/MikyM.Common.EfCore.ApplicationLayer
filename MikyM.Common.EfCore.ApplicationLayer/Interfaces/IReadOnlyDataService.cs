@@ -1,5 +1,4 @@
-﻿using MikyM.Common.ApplicationLayer.Interfaces;
-using MikyM.Common.EfCore.DataAccessLayer.Specifications;
+﻿using MikyM.Common.EfCore.DataAccessLayer.Specifications;
 using MikyM.Common.Utilities.Results;
 
 namespace MikyM.Common.EfCore.ApplicationLayer.Interfaces;
