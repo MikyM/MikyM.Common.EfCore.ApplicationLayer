@@ -11,7 +11,7 @@ namespace MikyM.Common.EfCore.ApplicationLayer.Services;
 /// Read-only data service
 /// </summary>
 /// <inheritdoc cref="IReadOnlyDataService{TEntity,TContext}"/>
-public class ReadOnlyDataService<TEntity, TContext> : DataServiceBase<TContext>, IReadOnlyDataService<TEntity, TContext>
+public class ReadOnlyDataService<TEntity, TContext> : EfCoreDataServiceBase<TContext>, IReadOnlyDataService<TEntity, TContext>
     where TEntity : AggregateRootEntity where TContext : DbContext
 {
     /// <summary>

@@ -8,7 +8,7 @@ namespace MikyM.Common.EfCore.ApplicationLayer.Interfaces;
 /// </summary>
 /// <typeparam name="TEntity">Type of the entity to create the service for, must derive from <see cref="AggregateRootEntity"/></typeparam>
 /// <typeparam name="TContext">Type of the <see cref="DbContext"/> to use </typeparam>
-public interface IReadOnlyDataService<TEntity, TContext> : IDataServiceBase<TContext>
+public interface IReadOnlyDataService<TEntity, TContext> : IEfCoreDataServiceBase<TContext>
     where TEntity : AggregateRootEntity where TContext : DbContext
 {
     /// <summary>

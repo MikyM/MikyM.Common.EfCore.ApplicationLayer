@@ -4,11 +4,8 @@ using MikyM.Common.Utilities.Results;
 
 namespace MikyM.Common.EfCore.ApplicationLayer.Services;
 
-/// <summary>
-/// Base data service
-/// </summary>
-/// <inheritdoc cref="IDataServiceBase{TContext}"/>
-public abstract class DataServiceBase<TContext> : IDataServiceBase<TContext> where TContext : DbContext
+/// <inheritdoc cref="IEfCoreDataServiceBase{TContext}"/>
+public abstract class EfCoreDataServiceBase<TContext> : IEfCoreDataServiceBase<TContext> where TContext : DbContext
 {
     /// <summary>
     /// <see cref="IMapper"/> instance
@@ -21,11 +18,11 @@ public abstract class DataServiceBase<TContext> : IDataServiceBase<TContext> whe
     private bool _disposed;
 
     /// <summary>
-    /// Creates a new instance of <see cref="DataServiceBase{TContext}"/>
+    /// Creates a new instance of <see cref="EfCoreDataServiceBase{TContext}"/>
     /// </summary>
     /// <param name="mapper">Instance of <see cref="IMapper"/></param>
     /// <param name="uof">Instance of <see cref="IUnitOfWork{TContext}"/></param>
-    protected DataServiceBase(IMapper mapper, IUnitOfWork<TContext> uof)
+    protected EfCoreDataServiceBase(IMapper mapper, IUnitOfWork<TContext> uof)
     {
         Mapper = mapper;
         UnitOfWork = uof;

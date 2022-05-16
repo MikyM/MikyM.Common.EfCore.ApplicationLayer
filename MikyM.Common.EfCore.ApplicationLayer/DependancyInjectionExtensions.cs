@@ -5,6 +5,7 @@ using Autofac.Extras.DynamicProxy;
 using Castle.DynamicProxy;
 using Microsoft.Extensions.Options;
 using MikyM.Common.ApplicationLayer;
+using MikyM.Common.ApplicationLayer.Interfaces;
 using MikyM.Common.EfCore.ApplicationLayer.Interfaces;
 using MikyM.Common.EfCore.ApplicationLayer.Pagination;
 using MikyM.Common.EfCore.ApplicationLayer.Services;
@@ -163,19 +164,19 @@ public static class DependancyInjectionExtensions
             }
         }
 
-        var excluded = new[] { typeof(DataServiceBase<>), typeof(CrudDataService<,>), typeof(ReadOnlyDataService<,>) };
+        var excluded = new[] { typeof(IDataServiceBase<>), typeof(EfCoreDataServiceBase<>), typeof(CrudDataService<,>), typeof(ReadOnlyDataService<,>) };
 
         foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
         {
             var dataSubSet = assembly.GetTypes()
                 .Where(x => x.GetInterfaces()
                                 .Any(y => y.IsGenericType &&
-                                          y.GetGenericTypeDefinition() == typeof(IDataServiceBase<>)) &&
+                                          y.GetGenericTypeDefinition() == typeof(IEfCoreDataServiceBase<>)) &&
                             x.IsClass && !x.IsAbstract)
                 .ToList();
-            
-            dataSubSet.RemoveAll(x => excluded.Any(y => y == x));
 
+            dataSubSet.RemoveAll(x => excluded.Any(y => y == x));
+            
             // handle data services
             foreach (var dataType in dataSubSet)
             {
