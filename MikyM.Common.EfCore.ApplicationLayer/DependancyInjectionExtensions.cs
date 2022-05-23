@@ -180,6 +180,9 @@ public static class DependancyInjectionExtensions
             // handle data services
             foreach (var dataType in dataSubSet)
             {
+                if (dataType.GetCustomAttribute<SkipDataServiceRegistrationAttribute>(false) is not null)
+                    continue;
+                
                 var scopeOverrideAttr = dataType.GetCustomAttribute<LifetimeAttribute>(false);
                 var intrAttrs = dataType.GetCustomAttributes<InterceptedByAttribute>(false).ToList();
                 var asAttr = dataType.GetCustomAttributes<RegisterAsAttribute>(false).ToList();
@@ -191,6 +194,10 @@ public static class DependancyInjectionExtensions
                     .Select(x => x.RegisterAsType)
                     .Distinct()
                     .ToList();
+                var interfaceType = dataType.GetInterface($"I{dataType.Name}"); // by naming convention
+                if (interfaceType is not null)
+                    registerAsTypes.Add(interfaceType);
+                
                 var shouldAsSelf = asAttr.Any(x => x.RegisterAsOption == RegisterAs.Self) &&
                                    asAttr.All(x => x.RegisterAsType != dataType);
                 var shouldAsInterfaces =
