@@ -195,7 +195,7 @@ public static class DependancyInjectionExtensions
                     .Distinct()
                     .ToList();
                 var interfaceType = dataType.GetInterface($"I{dataType.Name}"); // by naming convention
-                if (interfaceType is not null)
+                if (interfaceType is not null && !registerAsTypes.Contains(interfaceType))
                     registerAsTypes.Add(interfaceType);
                 
                 var shouldAsSelf = asAttr.Any(x => x.RegisterAsOption == RegisterAs.Self) &&
