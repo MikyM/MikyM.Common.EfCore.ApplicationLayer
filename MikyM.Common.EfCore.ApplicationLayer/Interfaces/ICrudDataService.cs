@@ -125,4 +125,12 @@ public interface ICrudDataService<TEntity, TContext> : IReadOnlyDataService<TEnt
     /// <param name="userId">Optional Id of the user that is responsible for the changes</param>
     /// <returns><see cref="Result"/> of the operation</returns>
     Task<Result> DisableRangeAsync(IEnumerable<long> ids, bool shouldSave = false, string? userId = null);
+    
+    /// <summary>
+    /// Detaches an entry and it's children
+    /// </summary>
+    /// <typeparam name="TDetach">Type of the entry</typeparam>
+    /// <param name="entry">Entry to detach</param>
+    /// <returns><see cref="Result"/> of the operation</returns>
+    void Detach<TDetach>(TDetach entry) where TDetach : class;
 }

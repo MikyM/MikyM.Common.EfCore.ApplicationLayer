@@ -277,6 +277,22 @@ public class CrudDataService<TEntity, TContext> : ReadOnlyDataService<TEntity, T
     }
 
     /// <inheritdoc />
+    public void Detach<TDetach>(TDetach entry) where TDetach : class
+    {
+        switch (entry)
+        {
+            case null:
+                throw new ArgumentNullException(nameof(entry));
+            case TEntity rootEntity:
+                Repository.Detach(rootEntity);
+                break;
+            default:
+                Repository.Detach(Mapper.Map<TEntity>(entry));
+                break;
+        }
+    }
+
+    /// <inheritdoc />
     public virtual async Task<Result> DisableRangeAsync<TDisable>(IEnumerable<TDisable> entries, bool shouldSave = false, string? userId = null)
         where TDisable : class
     {
