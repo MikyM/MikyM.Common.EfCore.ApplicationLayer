@@ -25,11 +25,11 @@ public class CrudDataService<TEntity, TContext> : ReadOnlyDataService<TEntity, T
     }
 
     /// <inheritdoc />
-    protected override IRepositoryBase BaseRepository => UnitOfWork.GetRepository<Repository<TEntity>>();
+    protected override IRepositoryBase BaseRepository => UnitOfWork.GetRepository<IRepository<TEntity>>();
     /// <summary>
     /// Gets the CRUD version of the <see cref="BaseRepository"/> (essentially casts it for you)
     /// </summary>
-    protected Repository<TEntity> Repository => (Repository<TEntity>)BaseRepository;
+    protected IRepository<TEntity> Repository => (IRepository<TEntity>)BaseRepository;
 
 
     /// <inheritdoc />

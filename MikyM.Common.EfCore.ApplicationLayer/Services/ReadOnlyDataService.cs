@@ -27,12 +27,12 @@ public class ReadOnlyDataService<TEntity, TContext> : EfCoreDataServiceBase<TCon
     /// <summary>
     /// Gets the base repository for this data service
     /// </summary>
-    protected virtual IRepositoryBase BaseRepository => UnitOfWork.GetRepository<ReadOnlyRepository<TEntity>>();
+    protected virtual IRepositoryBase BaseRepository => UnitOfWork.GetRepository<IReadOnlyRepository<TEntity>>();
     /// <summary>
     /// Gets the read-only version of the <see cref="BaseRepository"/> (essentially casts it for you)
     /// </summary>
-    protected ReadOnlyRepository<TEntity> ReadOnlyRepository =>
-        (ReadOnlyRepository<TEntity>)BaseRepository;
+    protected IReadOnlyRepository<TEntity> ReadOnlyRepository =>
+        (IReadOnlyRepository<TEntity>)BaseRepository;
 
     /// <inheritdoc />
     public virtual async Task<Result<TGetResult>> GetAsync<TGetResult>(bool shouldProject = false, params object[] keyValues) where TGetResult : class
