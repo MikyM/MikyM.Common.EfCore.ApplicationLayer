@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using MikyM.Common.EfCore.ApplicationLayer.Interfaces;
+using MikyM.Common.EfCore.DataAccessLayer.Context;
 using MikyM.Common.EfCore.DataAccessLayer.Repositories;
 using MikyM.Common.EfCore.DataAccessLayer.Specifications;
 using MikyM.Common.Utilities.Results;
@@ -12,7 +13,7 @@ namespace MikyM.Common.EfCore.ApplicationLayer.Services;
 /// </summary>
 /// <inheritdoc cref="IReadOnlyDataService{TEntity,TContext}"/>
 public class ReadOnlyDataService<TEntity, TContext> : EfCoreDataServiceBase<TContext>, IReadOnlyDataService<TEntity, TContext>
-    where TEntity : AggregateRootEntity where TContext : DbContext
+    where TEntity : AggregateRootEntity where TContext : class, IEfDbContext
 {
     /// <summary>
     /// Creates a new instance of <see cref="IReadOnlyDataService{TEntity,TContext}"/>

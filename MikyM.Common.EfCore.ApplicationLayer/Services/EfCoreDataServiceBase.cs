@@ -1,11 +1,12 @@
 ﻿using AutoMapper;
 using MikyM.Common.EfCore.ApplicationLayer.Interfaces;
+using MikyM.Common.EfCore.DataAccessLayer.Context;
 using MikyM.Common.Utilities.Results;
 
 namespace MikyM.Common.EfCore.ApplicationLayer.Services;
 
 /// <inheritdoc cref="IEfCoreDataServiceBase{TContext}"/>
-public abstract class EfCoreDataServiceBase<TContext> : IEfCoreDataServiceBase<TContext> where TContext : DbContext
+public abstract class EfCoreDataServiceBase<TContext> : IEfCoreDataServiceBase<TContext> where TContext : class, IEfDbContext
 {
     /// <summary>
     /// <see cref="IMapper"/> instance

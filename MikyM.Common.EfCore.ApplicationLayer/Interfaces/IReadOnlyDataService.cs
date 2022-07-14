@@ -1,4 +1,5 @@
-﻿using MikyM.Common.EfCore.DataAccessLayer.Specifications;
+﻿using MikyM.Common.EfCore.DataAccessLayer.Context;
+using MikyM.Common.EfCore.DataAccessLayer.Specifications;
 using MikyM.Common.Utilities.Results;
 
 namespace MikyM.Common.EfCore.ApplicationLayer.Interfaces;
@@ -9,7 +10,7 @@ namespace MikyM.Common.EfCore.ApplicationLayer.Interfaces;
 /// <typeparam name="TEntity">Type of the entity to create the service for, must derive from <see cref="AggregateRootEntity"/></typeparam>
 /// <typeparam name="TContext">Type of the <see cref="DbContext"/> to use </typeparam>
 public interface IReadOnlyDataService<TEntity, TContext> : IEfCoreDataServiceBase<TContext>
-    where TEntity : AggregateRootEntity where TContext : DbContext
+    where TEntity : AggregateRootEntity where TContext : class, IEfDbContext
 {
     /// <summary>
     /// Gets an entity based on given primary key values

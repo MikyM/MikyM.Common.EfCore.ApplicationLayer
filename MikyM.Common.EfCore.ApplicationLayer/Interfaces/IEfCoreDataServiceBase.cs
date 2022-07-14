@@ -1,4 +1,5 @@
 ﻿using MikyM.Common.ApplicationLayer.Interfaces;
+using MikyM.Common.EfCore.DataAccessLayer.Context;
 using MikyM.Common.Utilities.Results;
 
 namespace MikyM.Common.EfCore.ApplicationLayer.Interfaces;
@@ -7,7 +8,7 @@ namespace MikyM.Common.EfCore.ApplicationLayer.Interfaces;
 /// Base data service for Entity Framework Core
 /// </summary>
 /// <typeparam name="TContext">Type that derives from <see cref="DbContext"/></typeparam>
-public interface IEfCoreDataServiceBase<TContext> : IDataServiceBase<TContext> where TContext : DbContext
+public interface IEfCoreDataServiceBase<TContext> : IDataServiceBase<TContext> where TContext : class, IEfDbContext
 {
     /// <summary>
     /// Begins a transaction
