@@ -1,4 +1,5 @@
-﻿using MikyM.Common.EfCore.DataAccessLayer.Context;
+﻿using MikyM.Common.Domain.Entities.Base;
+using MikyM.Common.EfCore.DataAccessLayer.Context;
 using MikyM.Common.Utilities.Results;
 
 namespace MikyM.Common.EfCore.ApplicationLayer.Interfaces;
@@ -7,7 +8,7 @@ namespace MikyM.Common.EfCore.ApplicationLayer.Interfaces;
 /// CRUD data service
 /// </summary>
 public interface ICrudDataService<TEntity, TContext> : IReadOnlyDataService<TEntity, TContext>
-    where TEntity : AggregateRootEntity where TContext : class, IEfDbContext
+    where TEntity : class, IAggregateRootEntity where TContext : class, IEfDbContext
 {
     /// <summary>
     /// Adds an entry
