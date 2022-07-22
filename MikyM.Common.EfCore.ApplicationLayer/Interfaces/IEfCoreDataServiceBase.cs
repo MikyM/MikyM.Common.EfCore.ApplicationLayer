@@ -1,4 +1,5 @@
-﻿using MikyM.Common.ApplicationLayer.Interfaces;
+﻿using AutoMapper;
+using MikyM.Common.ApplicationLayer.Interfaces;
 using MikyM.Common.EfCore.DataAccessLayer.Context;
 using MikyM.Common.Utilities.Results;
 
@@ -10,6 +11,10 @@ namespace MikyM.Common.EfCore.ApplicationLayer.Interfaces;
 /// <typeparam name="TContext">Type that derives from <see cref="DbContext"/></typeparam>
 public interface IEfCoreDataServiceBase<TContext> : IDataServiceBase<TContext> where TContext : class, IEfDbContext
 {
+    /// <summary>
+    /// Mapper
+    /// </summary>
+    IMapper Mapper { get; }
     /// <summary>
     /// Current Unit of Work
     /// </summary>

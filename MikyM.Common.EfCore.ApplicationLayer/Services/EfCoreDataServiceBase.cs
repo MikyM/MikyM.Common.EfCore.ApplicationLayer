@@ -13,7 +13,7 @@ public abstract class EfCoreDataServiceBase<TContext> : IEfCoreDataServiceBase<T
     /// <summary>
     /// <see cref="IMapper"/> instance
     /// </summary>
-    protected readonly IMapper Mapper;
+    public IMapper Mapper { get; }
     /// <summary>
     /// Current Unit of Work
     /// </summary>
