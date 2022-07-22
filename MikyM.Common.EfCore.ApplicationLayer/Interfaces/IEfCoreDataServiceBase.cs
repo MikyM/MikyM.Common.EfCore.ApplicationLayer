@@ -11,6 +11,10 @@ namespace MikyM.Common.EfCore.ApplicationLayer.Interfaces;
 public interface IEfCoreDataServiceBase<TContext> : IDataServiceBase<TContext> where TContext : class, IEfDbContext
 {
     /// <summary>
+    /// Current Unit of Work
+    /// </summary>
+    new IUnitOfWork<TContext> UnitOfWork { get; }
+    /// <summary>
     /// Begins a transaction
     /// </summary>
     /// <returns>Task with a <see cref="Result"/> representing the async operation</returns>

@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using MikyM.Common.ApplicationLayer.Interfaces;
+using MikyM.Common.DataAccessLayer;
 using MikyM.Common.EfCore.ApplicationLayer.Interfaces;
 using MikyM.Common.EfCore.DataAccessLayer.Context;
 using MikyM.Common.Utilities.Results;
@@ -13,9 +15,10 @@ public abstract class EfCoreDataServiceBase<TContext> : IEfCoreDataServiceBase<T
     /// </summary>
     protected readonly IMapper Mapper;
     /// <summary>
-    /// <see cref="IUnitOfWork"/> instance
+    /// Current Unit of Work
     /// </summary>
-    protected readonly IUnitOfWork<TContext> UnitOfWork;
+    public IUnitOfWork<TContext> UnitOfWork { get; }
+    
     private bool _disposed;
 
     /// <summary>
@@ -71,6 +74,9 @@ public abstract class EfCoreDataServiceBase<TContext> : IEfCoreDataServiceBase<T
 
     /// <inheritdoc />
     public TContext Context => UnitOfWork.Context;
+
+    IUnitOfWorkBase IDataServiceBase<TContext>.UnitOfWork => UnitOfWork;
+
 
     // Public implementation of Dispose pattern callable by consumers.
     /// <inheritdoc />
