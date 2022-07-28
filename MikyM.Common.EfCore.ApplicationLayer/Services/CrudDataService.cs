@@ -340,7 +340,7 @@ public class CrudDataService<TEntity, TContext> : ReadOnlyDataService<TEntity, T
     }
 
     /// <inheritdoc />
-    public Result Detach<TDetach>(TDetach entry) where TDetach : class
+    public virtual Result Detach<TDetach>(TDetach entry) where TDetach : class
     {
         try
         {
