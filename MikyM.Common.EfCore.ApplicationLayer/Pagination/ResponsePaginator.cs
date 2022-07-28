@@ -4,24 +4,42 @@ using MikyM.Common.EfCore.DataAccessLayer.Pagination;
 
 namespace MikyM.Common.EfCore.ApplicationLayer.Pagination;
 
+/// <summary>
+/// Defines a response paginator.
+/// </summary>
 public interface IResponsePaginator
 {
+    /// <summary>
+    /// Creates a paginated response.
+    /// </summary>
+    /// <param name="pagedData">Data.</param>
+    /// <param name="validFilter">Filter.</param>
+    /// <param name="totalRecords">Number of total records.</param>
+    /// <param name="route">Route.</param>
+    /// <typeparam name="T">Type of data.</typeparam>
+    /// <returns>A paginated response.</returns>
     PagedResponse<List<T>> CreatePagedResponse<T>(List<T> pagedData, PaginationFilter validFilter,
         long totalRecords, string route);
 }
 
 /// <summary>
-/// 
+/// Response paginator.
 /// </summary>
 public class ResponsePaginator : IResponsePaginator
 {
     private readonly IUriService _uriService;
 
+    /// <summary>
+    /// Constructor.
+    /// </summary>
+    /// <param name="uriService">Uri service.</param>
     public ResponsePaginator(IUriService uriService)
     {
         _uriService = uriService;
     }
 
+
+    /// <inheritdoc />
     public PagedResponse<List<T>> CreatePagedResponse<T>(List<T> pagedData, PaginationFilter validFilter,
         long totalRecords, string route)
     {

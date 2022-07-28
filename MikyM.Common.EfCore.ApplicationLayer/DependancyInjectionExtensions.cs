@@ -13,15 +13,16 @@ using MikyM.Common.EfCore.ApplicationLayer.Services;
 namespace MikyM.Common.EfCore.ApplicationLayer;
 
 /// <summary>
-/// DI extensions for <see cref="ContainerBuilder"/>
+/// DI extensions for <see cref="ContainerBuilder"/>,
 /// </summary>
+[PublicAPI]
 public static class DependancyInjectionExtensions
 {
     /// <summary>
-    /// Registers <see cref="IResponsePaginator"/> with the container
+    /// Registers <see cref="IResponsePaginator"/> with the container.
     /// </summary>
-    /// <param name="options"></param>
-    /// <returns>Current <see cref="ApplicationConfiguration"/> instance</returns>
+    /// <param name="options">Options.</param>
+    /// <returns>Current <see cref="ApplicationConfiguration"/> instance.</returns>
     public static EfCoreDataServicesConfiguration AddResponseDataPaginator(this EfCoreDataServicesConfiguration options)
     {
         if (options.Config.GetType().GetField("Builder", BindingFlags.Instance |
@@ -35,11 +36,11 @@ public static class DependancyInjectionExtensions
     }
 
     /// <summary>
-    /// Registers data services with the <see cref="ContainerBuilder"/>
+    /// Registers data services with the <see cref="ContainerBuilder"/>.
     /// </summary>
-    /// <param name="applicationConfiguration">Application config</param>
-    /// <param name="options">Configuration action for data services</param>
-    /// <returns>Current <see cref="ApplicationConfiguration"/> instance</returns>
+    /// <param name="applicationConfiguration">Application config.</param>
+    /// <param name="options">Configuration action for data services.</param>
+    /// <returns>Current <see cref="ApplicationConfiguration"/> instance.</returns>
     public static ApplicationConfiguration AddEfCoreDataServices(this ApplicationConfiguration applicationConfiguration, Action<EfCoreDataServicesConfiguration>? options = null)
     {
         if (applicationConfiguration.GetType().GetField("Builder", BindingFlags.Instance |

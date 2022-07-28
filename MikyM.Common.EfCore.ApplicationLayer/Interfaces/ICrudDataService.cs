@@ -5,8 +5,9 @@ using MikyM.Common.Utilities.Results;
 namespace MikyM.Common.EfCore.ApplicationLayer.Interfaces;
 
 /// <summary>
-/// CRUD data service
-/// </summary>
+/// CRUD data service.
+/// </summary>\
+[PublicAPI]
 public interface ICrudDataService<TEntity, TContext> : IReadOnlyDataService<TEntity, TContext>
     where TEntity : class, IAggregateRootEntity where TContext : class, IEfDbContext
 {
@@ -28,7 +29,7 @@ public interface ICrudDataService<TEntity, TContext> : IReadOnlyDataService<TEnt
     /// <param name="shouldSave">Whether to automatically call SaveChangesAsync() </param>
     /// <param name="userId">Optional Id of the user that is responsible for the changes</param>
     /// <returns><see cref="Result"/> with <see cref="IEnumerable{T}"/> containing Ids of the newly created entities</returns>
-    Task<Result<IEnumerable<long>>> AddRangeAsync<TPost>(IEnumerable<TPost> entries, bool shouldSave = false,
+    Task<Result<IReadOnlyList<long>>> AddRangeAsync<TPost>(IEnumerable<TPost> entries, bool shouldSave = false,
         string? userId = null) where TPost : class;
 
     /// <summary>
@@ -134,5 +135,5 @@ public interface ICrudDataService<TEntity, TContext> : IReadOnlyDataService<TEnt
     /// <typeparam name="TDetach">Type of the entry</typeparam>
     /// <param name="entry">Entry to detach</param>
     /// <returns><see cref="Result"/> of the operation</returns>
-    void Detach<TDetach>(TDetach entry) where TDetach : class;
+    Result Detach<TDetach>(TDetach entry) where TDetach : class;
 }

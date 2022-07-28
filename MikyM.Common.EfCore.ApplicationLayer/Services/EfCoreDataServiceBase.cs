@@ -4,6 +4,7 @@ using MikyM.Common.DataAccessLayer;
 using MikyM.Common.EfCore.ApplicationLayer.Interfaces;
 using MikyM.Common.EfCore.DataAccessLayer.Context;
 using MikyM.Common.Utilities.Results;
+using MikyM.Common.Utilities.Results.Errors;
 
 namespace MikyM.Common.EfCore.ApplicationLayer.Services;
 
@@ -11,21 +12,21 @@ namespace MikyM.Common.EfCore.ApplicationLayer.Services;
 public abstract class EfCoreDataServiceBase<TContext> : IEfCoreDataServiceBase<TContext> where TContext : class, IEfDbContext
 {
     /// <summary>
-    /// <see cref="IMapper"/> instance
+    /// <see cref="IMapper"/> instance.
     /// </summary>
     public IMapper Mapper { get; }
     /// <summary>
-    /// Current Unit of Work
+    /// Current Unit of Work.
     /// </summary>
     public IUnitOfWork<TContext> UnitOfWork { get; }
     
     private bool _disposed;
 
     /// <summary>
-    /// Creates a new instance of <see cref="EfCoreDataServiceBase{TContext}"/>
+    /// Creates a new instance of <see cref="EfCoreDataServiceBase{TContext}"/>.
     /// </summary>
-    /// <param name="mapper">Instance of <see cref="IMapper"/></param>
-    /// <param name="uof">Instance of <see cref="IUnitOfWork{TContext}"/></param>
+    /// <param name="mapper">Instance of <see cref="IMapper"/>.</param>
+    /// <param name="uof">Instance of <see cref="IUnitOfWork{TContext}"/>.</param>
     protected EfCoreDataServiceBase(IMapper mapper, IUnitOfWork<TContext> uof)
     {
         Mapper = mapper;
@@ -35,40 +36,36 @@ public abstract class EfCoreDataServiceBase<TContext> : IEfCoreDataServiceBase<T
     /// <inheritdoc />
     public virtual async Task<Result> CommitAsync(string auditUserId)
     {
-        await UnitOfWork.CommitAsync(auditUserId ?? string.Empty);
+        await UnitOfWork.CommitAsync(auditUserId).ConfigureAwait(false);
         return Result.FromSuccess();
     }
 
     /// <inheritdoc />
     public virtual async Task<Result> CommitAsync()
     { 
-        await UnitOfWork.CommitAsync();
+        await UnitOfWork.CommitAsync().ConfigureAwait(false);
         return Result.FromSuccess();
     }
 
     /// <inheritdoc />
     public virtual async Task<Result<int>> CommitWithCountAsync(string auditUserId)
-    {
-        return await UnitOfWork.CommitWithCountAsync(auditUserId);
-    }
+        => await UnitOfWork.CommitWithCountAsync(auditUserId).ConfigureAwait(false);
 
     /// <inheritdoc />
     public virtual async Task<Result<int>> CommitWithCountAsync()
-    {
-        return await UnitOfWork.CommitWithCountAsync();
-    }
+        => await UnitOfWork.CommitWithCountAsync().ConfigureAwait(false);
 
     /// <inheritdoc />
     public virtual async Task<Result> RollbackAsync()
     {
-        await UnitOfWork.RollbackAsync();
+        await UnitOfWork.RollbackAsync().ConfigureAwait(false);
         return Result.FromSuccess();
     }
 
     /// <inheritdoc />
     public virtual async Task<Result> BeginTransactionAsync()
     {
-        await UnitOfWork.UseTransactionAsync();
+        await UnitOfWork.UseTransactionAsync().ConfigureAwait(false);
         return Result.FromSuccess();
     }
 
@@ -98,5 +95,41 @@ public abstract class EfCoreDataServiceBase<TContext> : IEfCoreDataServiceBase<T
         if (disposing) UnitOfWork.Dispose();
 
         _disposed = true;
+    }
+
+    /// <summary>
+    /// Wraps a call in a try catch block.
+    /// </summary>
+    /// <param name="func">Func to wrap.</param>
+    /// <typeparam name="TResult">Result.</typeparam>
+    /// <returns>Result of the call.</returns>
+    protected async Task<Result<TResult>> ExToResultWrapAsync<TResult>(Func<Task<TResult>> func)
+    {
+        try
+        {
+            return await func.Invoke();
+        }
+        catch (Exception ex)
+        {
+            return new ExceptionError(ex);
+        }
+    }
+    
+    /// <summary>
+    /// Wraps a call in a try catch block.
+    /// </summary>
+    /// <param name="func">Func to wrap.</param>
+    /// <typeparam name="TResult">Result.</typeparam>
+    /// <returns>Result of the call.</returns>
+    protected Result<TResult> ExToResultWrap<TResult>(Func<TResult> func)
+    {
+        try
+        {
+            return func.Invoke();
+        }
+        catch (Exception ex)
+        {
+            return new ExceptionError(ex);
+        }
     }
 }

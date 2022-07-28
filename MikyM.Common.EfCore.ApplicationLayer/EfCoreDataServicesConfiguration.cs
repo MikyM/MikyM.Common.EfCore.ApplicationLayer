@@ -4,7 +4,7 @@ using MikyM.Common.ApplicationLayer;
 namespace MikyM.Common.EfCore.ApplicationLayer;
 
 /// <summary>
-/// Registration extension configuration
+/// Registration extension configuration.
 /// </summary>
 public sealed class EfCoreDataServicesConfiguration : DataServiceConfigurationBase, IOptions<EfCoreDataServicesConfiguration>
 {
