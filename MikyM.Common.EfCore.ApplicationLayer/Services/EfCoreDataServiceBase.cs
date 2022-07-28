@@ -91,13 +91,14 @@ public abstract class EfCoreDataServiceBase<TContext> : IEfCoreDataServiceBase<T
     /// Wraps a call in a try catch block.
     /// </summary>
     /// <param name="func">Func to wrap.</param>
+    /// <param name="shouldConfigureAwaitFalse">Whether to use ConfigureAwait(false).</param>
     /// <typeparam name="TResult">Result.</typeparam>
     /// <returns>Result of the call.</returns>
-    protected async Task<Result<TResult>> ExToResultWrapAsync<TResult>(Func<Task<TResult>> func)
+    protected async Task<Result<TResult>> ExToResultWrapAsync<TResult>(Func<Task<TResult>> func, bool shouldConfigureAwaitFalse = true)
     {
         try
         {
-            return await func.Invoke().ConfigureAwait(false);
+            return await func.Invoke().ConfigureAwait(!shouldConfigureAwaitFalse);
         }
         catch (Exception ex)
         {
@@ -109,12 +110,13 @@ public abstract class EfCoreDataServiceBase<TContext> : IEfCoreDataServiceBase<T
     /// Wraps a call in a try catch block.
     /// </summary>
     /// <param name="func">Func to wrap.</param>
+    /// <param name="shouldConfigureAwaitFalse">Whether to use ConfigureAwait(false).</param>
     /// <returns>Result of the call.</returns>
-    protected async Task<Result> ExToResultWrapAsync(Func<Task> func)
+    protected async Task<Result> ExToResultWrapAsync(Func<Task> func, bool shouldConfigureAwaitFalse = true)
     {
         try
         {
-            await func.Invoke().ConfigureAwait(false);
+            await func.Invoke().ConfigureAwait(!shouldConfigureAwaitFalse);
             return Result.FromSuccess();
         }
         catch (Exception ex)
