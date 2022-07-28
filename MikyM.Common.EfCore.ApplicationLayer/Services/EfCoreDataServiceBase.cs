@@ -35,39 +35,27 @@ public abstract class EfCoreDataServiceBase<TContext> : IEfCoreDataServiceBase<T
 
     /// <inheritdoc />
     public virtual async Task<Result> CommitAsync(string auditUserId)
-    {
-        await UnitOfWork.CommitAsync(auditUserId).ConfigureAwait(false);
-        return Result.FromSuccess();
-    }
+        => await ExToResultWrapAsync(async () => await UnitOfWork.CommitAsync(auditUserId).ConfigureAwait(false));
 
     /// <inheritdoc />
     public virtual async Task<Result> CommitAsync()
-    { 
-        await UnitOfWork.CommitAsync().ConfigureAwait(false);
-        return Result.FromSuccess();
-    }
+        => await ExToResultWrapAsync(async () => await UnitOfWork.CommitAsync().ConfigureAwait(false));
 
     /// <inheritdoc />
     public virtual async Task<Result<int>> CommitWithCountAsync(string auditUserId)
-        => await UnitOfWork.CommitWithCountAsync(auditUserId).ConfigureAwait(false);
+        => await ExToResultWrapAsync(async () => await UnitOfWork.CommitWithCountAsync(auditUserId).ConfigureAwait(false));
 
     /// <inheritdoc />
     public virtual async Task<Result<int>> CommitWithCountAsync()
-        => await UnitOfWork.CommitWithCountAsync().ConfigureAwait(false);
+        => await ExToResultWrapAsync(async () => await UnitOfWork.CommitWithCountAsync().ConfigureAwait(false));
 
     /// <inheritdoc />
     public virtual async Task<Result> RollbackAsync()
-    {
-        await UnitOfWork.RollbackAsync().ConfigureAwait(false);
-        return Result.FromSuccess();
-    }
+        => await ExToResultWrapAsync(async () => await UnitOfWork.RollbackAsync().ConfigureAwait(false));
 
     /// <inheritdoc />
     public virtual async Task<Result> BeginTransactionAsync()
-    {
-        await UnitOfWork.UseTransactionAsync().ConfigureAwait(false);
-        return Result.FromSuccess();
-    }
+        => await ExToResultWrapAsync(async () => await UnitOfWork.UseTransactionAsync().ConfigureAwait(false));
 
     /// <inheritdoc />
     public TContext Context => UnitOfWork.Context;
@@ -90,9 +78,11 @@ public abstract class EfCoreDataServiceBase<TContext> : IEfCoreDataServiceBase<T
     /// <param name="disposing">Whether disposing</param>
     protected virtual void Dispose(bool disposing)
     {
-        if (_disposed) return;
+        if (_disposed) 
+            return;
 
-        if (disposing) UnitOfWork.Dispose();
+        if (disposing) 
+            UnitOfWork.Dispose();
 
         _disposed = true;
     }
@@ -107,7 +97,25 @@ public abstract class EfCoreDataServiceBase<TContext> : IEfCoreDataServiceBase<T
     {
         try
         {
-            return await func.Invoke();
+            return await func.Invoke().ConfigureAwait(false);
+        }
+        catch (Exception ex)
+        {
+            return new ExceptionError(ex);
+        }
+    }
+    
+    /// <summary>
+    /// Wraps a call in a try catch block.
+    /// </summary>
+    /// <param name="func">Func to wrap.</param>
+    /// <returns>Result of the call.</returns>
+    protected async Task<Result> ExToResultWrapAsync(Func<Task> func)
+    {
+        try
+        {
+            await func.Invoke().ConfigureAwait(false);
+            return Result.FromSuccess();
         }
         catch (Exception ex)
         {
@@ -121,11 +129,30 @@ public abstract class EfCoreDataServiceBase<TContext> : IEfCoreDataServiceBase<T
     /// <param name="func">Func to wrap.</param>
     /// <typeparam name="TResult">Result.</typeparam>
     /// <returns>Result of the call.</returns>
-    protected Result<TResult> ExToResultWrap<TResult>(Func<TResult> func)
+    protected Result<TResult> ExToResultOfTWrap<TResult>(Func<TResult> func)
     {
         try
         {
             return func.Invoke();
+        }
+        catch (Exception ex)
+        {
+            return new ExceptionError(ex);
+        }
+    }
+    
+    /// <summary>
+    /// Wraps a call in a try catch block.
+    /// </summary>
+    /// <param name="func">Func to wrap.</param>
+    /// <typeparam name="TResult">Result.</typeparam>
+    /// <returns>Result of the call.</returns>
+    protected Result ExToResultWrap<TResult>(Func<TResult> func)
+    {
+        try
+        {
+            func.Invoke();
+            return Result.FromSuccess();
         }
         catch (Exception ex)
         {
