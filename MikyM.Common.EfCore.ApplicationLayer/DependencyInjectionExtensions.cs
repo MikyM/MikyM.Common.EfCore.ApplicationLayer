@@ -69,10 +69,10 @@ public static class DependencyInjectionExtensions
                     .As(typeof(ICrudDataService<,>))
                     .SingleInstance();
                 registReadOnlyGenericIdBuilder = builder.RegisterGeneric(typeof(ReadOnlyDataService<,,>))
-                    .As(typeof(IReadOnlyDataService<,>))
+                    .As(typeof(IReadOnlyDataService<,,>))
                     .SingleInstance();
                 registCrudGenericIdBuilder = builder.RegisterGeneric(typeof(CrudDataService<,,>))
-                    .As(typeof(ICrudDataService<,>))
+                    .As(typeof(ICrudDataService<,,>))
                     .SingleInstance();
                 break;
             case Lifetime.InstancePerRequest:
@@ -83,10 +83,10 @@ public static class DependencyInjectionExtensions
                     .As(typeof(ICrudDataService<,>))
                     .InstancePerRequest();
                 registReadOnlyGenericIdBuilder = builder.RegisterGeneric(typeof(ReadOnlyDataService<,,>))
-                    .As(typeof(IReadOnlyDataService<,>))
+                    .As(typeof(IReadOnlyDataService<,,>))
                     .InstancePerRequest();
                 registCrudGenericIdBuilder = builder.RegisterGeneric(typeof(CrudDataService<,,>))
-                    .As(typeof(ICrudDataService<,>))
+                    .As(typeof(ICrudDataService<,,>))
                     .InstancePerRequest();
                 break;
             case Lifetime.InstancePerLifetimeScope:
@@ -97,10 +97,10 @@ public static class DependencyInjectionExtensions
                     .As(typeof(ICrudDataService<,>))
                     .InstancePerLifetimeScope();
                 registReadOnlyGenericIdBuilder = builder.RegisterGeneric(typeof(ReadOnlyDataService<,,>))
-                    .As(typeof(IReadOnlyDataService<,>))
+                    .As(typeof(IReadOnlyDataService<,,>))
                     .InstancePerLifetimeScope();
                 registCrudGenericIdBuilder = builder.RegisterGeneric(typeof(CrudDataService<,,>))
-                    .As(typeof(ICrudDataService<,>))
+                    .As(typeof(ICrudDataService<,,>))
                     .InstancePerLifetimeScope();
                 break;
             case Lifetime.InstancePerMatchingLifetimeScope:
@@ -111,10 +111,10 @@ public static class DependencyInjectionExtensions
                     .As(typeof(ICrudDataService<,>))
                     .InstancePerMatchingLifetimeScope();
                 registReadOnlyGenericIdBuilder = builder.RegisterGeneric(typeof(ReadOnlyDataService<,,>))
-                    .As(typeof(IReadOnlyDataService<,>))
+                    .As(typeof(IReadOnlyDataService<,,>))
                     .InstancePerMatchingLifetimeScope();
                 registCrudGenericIdBuilder = builder.RegisterGeneric(typeof(CrudDataService<,,>))
-                    .As(typeof(ICrudDataService<,>))
+                    .As(typeof(ICrudDataService<,,>))
                     .InstancePerMatchingLifetimeScope();
                 break;
             case Lifetime.InstancePerDependency:
@@ -125,10 +125,10 @@ public static class DependencyInjectionExtensions
                     .As(typeof(ICrudDataService<,>))
                     .InstancePerDependency();
                 registReadOnlyGenericIdBuilder = builder.RegisterGeneric(typeof(ReadOnlyDataService<,,>))
-                    .As(typeof(IReadOnlyDataService<,>))
+                    .As(typeof(IReadOnlyDataService<,,>))
                     .InstancePerDependency();
                 registCrudGenericIdBuilder = builder.RegisterGeneric(typeof(CrudDataService<,,>))
-                    .As(typeof(ICrudDataService<,>))
+                    .As(typeof(ICrudDataService<,,>))
                     .InstancePerDependency();
                 break;
             case Lifetime.InstancePerOwned:
