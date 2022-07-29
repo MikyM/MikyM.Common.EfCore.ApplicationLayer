@@ -172,7 +172,7 @@ public static class DependencyInjectionExtensions
 
                     if (!readEnabled)
                     {
-                        registReadOnlyBuilder = registCrudBuilder.EnableInterfaceInterceptors();
+                        registReadOnlyBuilder = registReadOnlyBuilder.EnableInterfaceInterceptors();
                         registReadOnlyGenericIdBuilder = registReadOnlyGenericIdBuilder.EnableInterfaceInterceptors();
                         readEnabled = true;
                     }
@@ -206,7 +206,7 @@ public static class DependencyInjectionExtensions
                         : registReadOnlyGenericIdBuilder.InterceptedBy(interceptorType);
                     if (!readEnabled)
                     {
-                        registReadOnlyBuilder = registCrudBuilder.EnableInterfaceInterceptors();
+                        registReadOnlyBuilder = registReadOnlyBuilder.EnableInterfaceInterceptors();
                         registReadOnlyGenericIdBuilder = registReadOnlyGenericIdBuilder.EnableInterfaceInterceptors();
                         readEnabled = true;
                     }
