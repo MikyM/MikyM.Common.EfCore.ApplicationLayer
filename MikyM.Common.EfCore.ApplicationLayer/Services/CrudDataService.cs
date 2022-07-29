@@ -407,7 +407,7 @@ public class CrudDataService<TEntity, TId, TContext> : ReadOnlyDataService<TEnti
 /// </summary>
 /// <inheritdoc cref="ICrudDataService{TEntity,TContext}"/>
 [PublicAPI]
-public class CrudDataService<TEntity, TContext> : CrudDataService<TEntity, long, TContext>
+public class CrudDataService<TEntity, TContext> : CrudDataService<TEntity, long, TContext>, ICrudDataService<TEntity, TContext>
     where TEntity : class, IEntity<long> where TContext : class, IEfDbContext
 {
     /// <summary>

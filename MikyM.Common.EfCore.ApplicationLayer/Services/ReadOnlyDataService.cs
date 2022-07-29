@@ -174,7 +174,7 @@ public class ReadOnlyDataService<TEntity, TId, TContext> : EfCoreDataServiceBase
 /// </summary>
 /// <inheritdoc cref="IReadOnlyDataService{TEntity,TContext}"/>
 [PublicAPI]
-public class ReadOnlyDataService<TEntity, TContext> : ReadOnlyDataService<TEntity, long, TContext>
+public class ReadOnlyDataService<TEntity, TContext> : ReadOnlyDataService<TEntity, long, TContext>, IReadOnlyDataService<TEntity, TContext>
     where TEntity : class, IEntity<long>
     where TContext : class, IEfDbContext
 {
