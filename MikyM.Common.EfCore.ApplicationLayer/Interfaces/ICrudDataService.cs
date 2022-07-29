@@ -1,15 +1,16 @@
-﻿using MikyM.Common.Domain.Entities.Base;
-using MikyM.Common.EfCore.DataAccessLayer.Context;
+﻿using MikyM.Common.EfCore.DataAccessLayer.Context;
 using MikyM.Common.Utilities.Results;
 
 namespace MikyM.Common.EfCore.ApplicationLayer.Interfaces;
 
 /// <summary>
 /// CRUD data service.
-/// </summary>\
+/// </summary>
 [PublicAPI]
-public interface ICrudDataService<TEntity, TContext> : IReadOnlyDataService<TEntity, TContext>
-    where TEntity : class, IAggregateRootEntity where TContext : class, IEfDbContext
+public interface ICrudDataService<TEntity, TId, TContext> : IReadOnlyDataService<TEntity, TId, TContext>
+    where TEntity : class, IEntity<TId>
+    where TContext : class, IEfDbContext
+    where TId : IComparable, IEquatable<TId>, IComparable<TId>
 {
     /// <summary>
     /// Adds an entry
@@ -19,7 +20,8 @@ public interface ICrudDataService<TEntity, TContext> : IReadOnlyDataService<TEnt
     /// <param name="shouldSave">Whether to automatically call SaveChangesAsync() </param>
     /// <param name="userId">Optional Id of the user that is responsible for the changes</param>
     /// <returns><see cref="Result"/> with the Id of the newly created entity</returns>
-    Task<Result<long>> AddAsync<TPost>(TPost entry, bool shouldSave = false, string? userId = null) where TPost : class;
+    Task<Result<TId?>> AddAsync<TPost>(TPost entry, bool shouldSave = false, string? userId = null)
+        where TPost : class;
 
     /// <summary>
     /// Adds a range of entries
@@ -29,7 +31,7 @@ public interface ICrudDataService<TEntity, TContext> : IReadOnlyDataService<TEnt
     /// <param name="shouldSave">Whether to automatically call SaveChangesAsync() </param>
     /// <param name="userId">Optional Id of the user that is responsible for the changes</param>
     /// <returns><see cref="Result"/> with <see cref="IEnumerable{T}"/> containing Ids of the newly created entities</returns>
-    Task<Result<IReadOnlyList<long>>> AddRangeAsync<TPost>(IEnumerable<TPost> entries, bool shouldSave = false,
+    Task<Result<IReadOnlyList<TId>>> AddRangeAsync<TPost>(IEnumerable<TPost> entries, bool shouldSave = false,
         string? userId = null) where TPost : class;
 
     /// <summary>
@@ -68,7 +70,7 @@ public interface ICrudDataService<TEntity, TContext> : IReadOnlyDataService<TEnt
     /// <param name="shouldSave">Whether to automatically call SaveChangesAsync() </param>
     /// <param name="userId">Optional Id of the user that is responsible for the changes</param>
     /// <returns><see cref="Result"/> of the operation</returns>
-    Task<Result> DeleteAsync(long id, bool shouldSave = false, string? userId = null);
+    Task<Result> DeleteAsync(TId id, bool shouldSave = false, string? userId = null);
 
     /// <summary>
     /// Deletes a range of entities
@@ -87,7 +89,7 @@ public interface ICrudDataService<TEntity, TContext> : IReadOnlyDataService<TEnt
     /// <param name="shouldSave">Whether to automatically call SaveChangesAsync() </param>
     /// <param name="userId">Optional Id of the user that is responsible for the changes</param>
     /// <returns><see cref="Result"/> of the operation</returns>
-    Task<Result> DeleteRangeAsync(IEnumerable<long> ids, bool shouldSave = false, string? userId = null);
+    Task<Result> DeleteRangeAsync(IEnumerable<TId> ids, bool shouldSave = false, string? userId = null);
 
     /// <summary>
     /// Disables an entity
@@ -107,7 +109,7 @@ public interface ICrudDataService<TEntity, TContext> : IReadOnlyDataService<TEnt
     /// <param name="shouldSave">Whether to automatically call SaveChangesAsync() </param>
     /// <param name="userId">Optional Id of the user that is responsible for the changes</param>
     /// <returns><see cref="Result"/> of the operation</returns>
-    Task<Result> DisableAsync(long id, bool shouldSave = false, string? userId = null);
+    Task<Result> DisableAsync(TId id, bool shouldSave = false, string? userId = null);
 
     /// <summary>
     /// Disables a range of entities
@@ -127,8 +129,8 @@ public interface ICrudDataService<TEntity, TContext> : IReadOnlyDataService<TEnt
     /// <param name="shouldSave">Whether to automatically call SaveChangesAsync() </param>
     /// <param name="userId">Optional Id of the user that is responsible for the changes</param>
     /// <returns><see cref="Result"/> of the operation</returns>
-    Task<Result> DisableRangeAsync(IEnumerable<long> ids, bool shouldSave = false, string? userId = null);
-    
+    Task<Result> DisableRangeAsync(IEnumerable<TId> ids, bool shouldSave = false, string? userId = null);
+
     /// <summary>
     /// Detaches an entry and it's children
     /// </summary>
@@ -136,4 +138,13 @@ public interface ICrudDataService<TEntity, TContext> : IReadOnlyDataService<TEnt
     /// <param name="entry">Entry to detach</param>
     /// <returns><see cref="Result"/> of the operation</returns>
     Result Detach<TDetach>(TDetach entry) where TDetach : class;
+}
+
+/// <summary>
+/// CRUD data service.
+/// </summary>
+[PublicAPI]
+public interface ICrudDataService<TEntity, TContext> : ICrudDataService<TEntity, long, TContext>
+    where TEntity : class, IEntity<long> where TContext : class, IEfDbContext
+{
 }

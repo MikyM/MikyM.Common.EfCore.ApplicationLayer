@@ -1,6 +1,5 @@
 ﻿using System.Linq.Expressions;
 using AutoMapper;
-using MikyM.Common.Domain.Entities.Base;
 using MikyM.Common.EfCore.ApplicationLayer.Interfaces;
 using MikyM.Common.EfCore.DataAccessLayer.Context;
 using MikyM.Common.EfCore.DataAccessLayer.Repositories;
@@ -13,13 +12,16 @@ namespace MikyM.Common.EfCore.ApplicationLayer.Services;
 /// <summary>
 /// Read-only data service.
 /// </summary>
-/// <inheritdoc cref="IReadOnlyDataService{TEntity,TContext}"/>
+/// <inheritdoc cref="IReadOnlyDataService{TEntity,TId,TContext}"/>
 [PublicAPI]
-public class ReadOnlyDataService<TEntity, TContext> : EfCoreDataServiceBase<TContext>, IReadOnlyDataService<TEntity, TContext>
-    where TEntity : class, IAggregateRootEntity where TContext : class, IEfDbContext
+public class ReadOnlyDataService<TEntity, TId, TContext> : EfCoreDataServiceBase<TContext>,
+    IReadOnlyDataService<TEntity, TId, TContext>
+    where TEntity : class, IEntity<TId>
+    where TContext : class, IEfDbContext
+    where TId : IComparable, IEquatable<TId>, IComparable<TId>
 {
     /// <summary>
-    /// Creates a new instance of <see cref="IReadOnlyDataService{TEntity,TContext}"/>.
+    /// Creates a new instance of <see cref="IReadOnlyDataService{TEntity,TId,TContext}"/>.
     /// </summary>
     /// <param name="mapper">Instance of <see cref="IMapper"/>.</param>
     /// <param name="uof">Instance of <see cref="IUnitOfWork"/>.</param>
@@ -30,12 +32,12 @@ public class ReadOnlyDataService<TEntity, TContext> : EfCoreDataServiceBase<TCon
     /// <summary>
     /// Gets the base repository for this data service.
     /// </summary>
-    protected virtual IRepositoryBase BaseRepository => UnitOfWork.GetRepository<IReadOnlyRepository<TEntity>>();
+    protected virtual IRepositoryBase BaseRepository => UnitOfWork.GetRepository<IReadOnlyRepository<TEntity,TId>>();
     /// <summary>
     /// Gets the read-only version of the <see cref="BaseRepository"/> (essentially casts it for you).
     /// </summary>
-    protected IReadOnlyRepository<TEntity> ReadOnlyRepository =>
-        (IReadOnlyRepository<TEntity>)BaseRepository;
+    protected IReadOnlyRepository<TEntity,TId> ReadOnlyRepository =>
+        (IReadOnlyRepository<TEntity,TId>)BaseRepository;
 
     /// <inheritdoc />
     public virtual async Task<Result<TGetResult>> GetAsync<TGetResult>(bool shouldProject = false, params object[] keyValues) where TGetResult : class
@@ -165,4 +167,23 @@ public class ReadOnlyDataService<TEntity, TContext> : EfCoreDataServiceBase<TCon
     /// <inheritdoc />
     public async Task<Result<bool>> AnyAsync(ISpecification<TEntity> specification)
         => await ExToResultWrapAsync(async () => await ReadOnlyRepository.AnyAsync(specification).ConfigureAwait(false));
+}
+
+/// <summary>
+/// Read-only data service.
+/// </summary>
+/// <inheritdoc cref="IReadOnlyDataService{TEntity,TContext}"/>
+[PublicAPI]
+public class ReadOnlyDataService<TEntity, TContext> : ReadOnlyDataService<TEntity, long, TContext>
+    where TEntity : class, IEntity<long>
+    where TContext : class, IEfDbContext
+{
+    /// <summary>
+    /// Creates a new instance of <see cref="IReadOnlyDataService{TEntity,TContext}"/>.
+    /// </summary>
+    /// <param name="mapper">Instance of <see cref="IMapper"/>.</param>
+    /// <param name="uof">Instance of <see cref="IUnitOfWork"/>.</param>
+    public ReadOnlyDataService(IMapper mapper, IUnitOfWork<TContext> uof) : base(mapper, uof)
+    {
+    }
 }

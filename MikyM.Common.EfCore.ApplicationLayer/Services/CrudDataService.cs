@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using MikyM.Common.Domain.Entities.Base;
 using MikyM.Common.EfCore.ApplicationLayer.Interfaces;
 using MikyM.Common.EfCore.DataAccessLayer.Context;
 using MikyM.Common.EfCore.DataAccessLayer.Repositories;
@@ -13,13 +12,16 @@ namespace MikyM.Common.EfCore.ApplicationLayer.Services;
 /// <summary>
 /// CRUD data service.
 /// </summary>
-/// <inheritdoc cref="ICrudDataService{TEntity,TContext}"/>
+/// <inheritdoc cref="ICrudDataService{TEntity,TId,TContext}"/>
 [PublicAPI]
-public class CrudDataService<TEntity, TContext> : ReadOnlyDataService<TEntity, TContext>, ICrudDataService<TEntity, TContext>
-    where TEntity : class, IAggregateRootEntity where TContext : class, IEfDbContext
+public class CrudDataService<TEntity, TId, TContext> : ReadOnlyDataService<TEntity, TId, TContext>,
+    ICrudDataService<TEntity, TId, TContext>
+    where TEntity : class, IEntity<TId>
+    where TContext : class, IEfDbContext
+    where TId : IComparable, IEquatable<TId>, IComparable<TId>
 {
     /// <summary>
-    /// Creates a new instance of <see cref="CrudDataService{TEntity,TContext}"/>.
+    /// Creates a new instance of <see cref="CrudDataService{TEntity,TId,TContext}"/>.
     /// </summary>
     /// <param name="mapper">Mapper instance.</param>
     /// <param name="uof">Unit of work instance.</param>
@@ -28,15 +30,15 @@ public class CrudDataService<TEntity, TContext> : ReadOnlyDataService<TEntity, T
     }
 
     /// <inheritdoc />
-    protected override IRepositoryBase BaseRepository => UnitOfWork.GetRepository<IRepository<TEntity>>();
+    protected override IRepositoryBase BaseRepository => UnitOfWork.GetRepository<IRepository<TEntity,TId>>();
     /// <summary>
     /// Gets the CRUD version of the <see cref="BaseRepository"/> (essentially casts it for you).
     /// </summary>
-    protected IRepository<TEntity> Repository => (IRepository<TEntity>)BaseRepository;
+    protected IRepository<TEntity,TId> Repository => (IRepository<TEntity,TId>)BaseRepository;
 
 
     /// <inheritdoc />
-    public virtual async Task<Result<long>> AddAsync<TPost>(TPost entry, bool shouldSave = false, string? userId = null)
+    public virtual async Task<Result<TId?>> AddAsync<TPost>(TPost entry, bool shouldSave = false, string? userId = null)
         where TPost : class
         => await ExToResultWrapAsync(async () =>
         {
@@ -53,7 +55,7 @@ public class CrudDataService<TEntity, TContext> : ReadOnlyDataService<TEntity, T
             }
 
             if (!shouldSave)
-                return 0;
+                return default;
         
             if (userId is null)
                 _ = await CommitAsync();
@@ -64,7 +66,7 @@ public class CrudDataService<TEntity, TContext> : ReadOnlyDataService<TEntity, T
         });
 
     /// <inheritdoc />
-    public virtual async Task<Result<IReadOnlyList<long>>> AddRangeAsync<TPost>(IEnumerable<TPost> entries,
+    public virtual async Task<Result<IReadOnlyList<TId>>> AddRangeAsync<TPost>(IEnumerable<TPost> entries,
         bool shouldSave = false, string? userId = null) where TPost : class
         => await ExToResultWrapAsync(async () =>
         {
@@ -82,14 +84,14 @@ public class CrudDataService<TEntity, TContext> : ReadOnlyDataService<TEntity, T
             }
 
             if (!shouldSave)
-                return new List<long>().AsReadOnly();
+                return new List<TId>().AsReadOnly();
 
             if (userId is null)
                 _ = await CommitAsync();
             else
                 _ = await CommitAsync(userId);
 
-            return (IReadOnlyList<long>)entities.Select(e => e.Id).ToList().AsReadOnly();
+            return (IReadOnlyList<TId>)entities.Select(e => e.Id).ToList().AsReadOnly();
         });
 
 
@@ -178,7 +180,7 @@ public class CrudDataService<TEntity, TContext> : ReadOnlyDataService<TEntity, T
     }
 
     /// <inheritdoc />
-    public virtual async Task<Result> DeleteAsync(long id, bool shouldSave = false, string? userId = null)
+    public virtual async Task<Result> DeleteAsync(TId id, bool shouldSave = false, string? userId = null)
     {
         try
         {
@@ -201,7 +203,7 @@ public class CrudDataService<TEntity, TContext> : ReadOnlyDataService<TEntity, T
     }
 
     /// <inheritdoc />
-    public virtual async Task<Result> DeleteRangeAsync(IEnumerable<long> ids, bool shouldSave = false, string? userId = null)
+    public virtual async Task<Result> DeleteRangeAsync(IEnumerable<TId> ids, bool shouldSave = false, string? userId = null)
     {
         try
         {
@@ -259,7 +261,7 @@ public class CrudDataService<TEntity, TContext> : ReadOnlyDataService<TEntity, T
     }
 
     /// <inheritdoc />
-    public virtual async Task<Result> DisableAsync(long id, bool shouldSave = false, string? userId = null)
+    public virtual async Task<Result> DisableAsync(TId id, bool shouldSave = false, string? userId = null)
     {
         try
         {
@@ -316,7 +318,7 @@ public class CrudDataService<TEntity, TContext> : ReadOnlyDataService<TEntity, T
     }
 
     /// <inheritdoc />
-    public virtual async Task<Result> DisableRangeAsync(IEnumerable<long> ids, bool shouldSave = false, string? userId = null)
+    public virtual async Task<Result> DisableRangeAsync(IEnumerable<TId> ids, bool shouldSave = false, string? userId = null)
     {
         try
         {
@@ -397,5 +399,23 @@ public class CrudDataService<TEntity, TContext> : ReadOnlyDataService<TEntity, T
         {
             return new ExceptionError(ex);
         }
+    }
+}
+
+/// <summary>
+/// CRUD data service.
+/// </summary>
+/// <inheritdoc cref="ICrudDataService{TEntity,TContext}"/>
+[PublicAPI]
+public class CrudDataService<TEntity, TContext> : CrudDataService<TEntity, long, TContext>
+    where TEntity : class, IEntity<long> where TContext : class, IEfDbContext
+{
+    /// <summary>
+    /// Creates a new instance of <see cref="CrudDataService{TEntity,TContext}"/>.
+    /// </summary>
+    /// <param name="mapper">Mapper instance.</param>
+    /// <param name="uof">Unit of work instance.</param>
+    public CrudDataService(IMapper mapper, IUnitOfWork<TContext> uof) : base(mapper, uof)
+    {
     }
 }

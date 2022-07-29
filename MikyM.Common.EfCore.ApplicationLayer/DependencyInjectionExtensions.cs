@@ -16,7 +16,7 @@ namespace MikyM.Common.EfCore.ApplicationLayer;
 /// DI extensions for <see cref="ContainerBuilder"/>,
 /// </summary>
 [PublicAPI]
-public static class DependancyInjectionExtensions
+public static class DependencyInjectionExtensions
 {
     /// <summary>
     /// Registers <see cref="IResponsePaginator"/> with the container.
@@ -56,6 +56,8 @@ public static class DependancyInjectionExtensions
         
         IRegistrationBuilder<object, ReflectionActivatorData, DynamicRegistrationStyle> registReadOnlyBuilder;
         IRegistrationBuilder<object, ReflectionActivatorData, DynamicRegistrationStyle> registCrudBuilder;
+        IRegistrationBuilder<object, ReflectionActivatorData, DynamicRegistrationStyle> registReadOnlyGenericIdBuilder;
+        IRegistrationBuilder<object, ReflectionActivatorData, DynamicRegistrationStyle> registCrudGenericIdBuilder;
 
         switch (config.BaseGenericDataServiceLifetime)
         {
@@ -66,12 +68,24 @@ public static class DependancyInjectionExtensions
                 registCrudBuilder = builder.RegisterGeneric(typeof(CrudDataService<,>))
                     .As(typeof(ICrudDataService<,>))
                     .SingleInstance();
+                registReadOnlyGenericIdBuilder = builder.RegisterGeneric(typeof(ReadOnlyDataService<,,>))
+                    .As(typeof(IReadOnlyDataService<,>))
+                    .SingleInstance();
+                registCrudGenericIdBuilder = builder.RegisterGeneric(typeof(CrudDataService<,,>))
+                    .As(typeof(ICrudDataService<,>))
+                    .SingleInstance();
                 break;
             case Lifetime.InstancePerRequest:
                 registReadOnlyBuilder = builder.RegisterGeneric(typeof(ReadOnlyDataService<,>))
                     .As(typeof(IReadOnlyDataService<,>))
                     .InstancePerRequest();
                 registCrudBuilder = builder.RegisterGeneric(typeof(CrudDataService<,>))
+                    .As(typeof(ICrudDataService<,>))
+                    .InstancePerRequest();
+                registReadOnlyGenericIdBuilder = builder.RegisterGeneric(typeof(ReadOnlyDataService<,,>))
+                    .As(typeof(IReadOnlyDataService<,>))
+                    .InstancePerRequest();
+                registCrudGenericIdBuilder = builder.RegisterGeneric(typeof(CrudDataService<,,>))
                     .As(typeof(ICrudDataService<,>))
                     .InstancePerRequest();
                 break;
@@ -82,6 +96,12 @@ public static class DependancyInjectionExtensions
                 registCrudBuilder = builder.RegisterGeneric(typeof(CrudDataService<,>))
                     .As(typeof(ICrudDataService<,>))
                     .InstancePerLifetimeScope();
+                registReadOnlyGenericIdBuilder = builder.RegisterGeneric(typeof(ReadOnlyDataService<,,>))
+                    .As(typeof(IReadOnlyDataService<,>))
+                    .InstancePerLifetimeScope();
+                registCrudGenericIdBuilder = builder.RegisterGeneric(typeof(CrudDataService<,,>))
+                    .As(typeof(ICrudDataService<,>))
+                    .InstancePerLifetimeScope();
                 break;
             case Lifetime.InstancePerMatchingLifetimeScope:
                 registReadOnlyBuilder = builder.RegisterGeneric(typeof(ReadOnlyDataService<,>))
@@ -90,12 +110,24 @@ public static class DependancyInjectionExtensions
                 registCrudBuilder = builder.RegisterGeneric(typeof(CrudDataService<,>))
                     .As(typeof(ICrudDataService<,>))
                     .InstancePerMatchingLifetimeScope();
+                registReadOnlyGenericIdBuilder = builder.RegisterGeneric(typeof(ReadOnlyDataService<,,>))
+                    .As(typeof(IReadOnlyDataService<,>))
+                    .InstancePerMatchingLifetimeScope();
+                registCrudGenericIdBuilder = builder.RegisterGeneric(typeof(CrudDataService<,,>))
+                    .As(typeof(ICrudDataService<,>))
+                    .InstancePerMatchingLifetimeScope();
                 break;
-            case Lifetime.InstancePerDependancy:
+            case Lifetime.InstancePerDependency:
                 registReadOnlyBuilder = builder.RegisterGeneric(typeof(ReadOnlyDataService<,>))
                     .As(typeof(IReadOnlyDataService<,>))
                     .InstancePerDependency();
                 registCrudBuilder = builder.RegisterGeneric(typeof(CrudDataService<,>))
+                    .As(typeof(ICrudDataService<,>))
+                    .InstancePerDependency();
+                registReadOnlyGenericIdBuilder = builder.RegisterGeneric(typeof(ReadOnlyDataService<,,>))
+                    .As(typeof(IReadOnlyDataService<,>))
+                    .InstancePerDependency();
+                registCrudGenericIdBuilder = builder.RegisterGeneric(typeof(CrudDataService<,,>))
                     .As(typeof(ICrudDataService<,>))
                     .InstancePerDependency();
                 break;
@@ -122,16 +154,26 @@ public static class DependancyInjectionExtensions
                         ? registReadOnlyBuilder.InterceptedBy(
                             typeof(AsyncInterceptorAdapter<>).MakeGenericType(interceptorType))
                         : registReadOnlyBuilder.InterceptedBy(interceptorType);
+                    registCrudGenericIdBuilder = interceptorType.GetInterfaces().Any(x => x == typeof(IAsyncInterceptor))
+                        ? registCrudGenericIdBuilder.InterceptedBy(
+                            typeof(AsyncInterceptorAdapter<>).MakeGenericType(interceptorType))
+                        : registCrudGenericIdBuilder.InterceptedBy(interceptorType);
+                    registReadOnlyGenericIdBuilder = interceptorType.GetInterfaces().Any(x => x == typeof(IAsyncInterceptor))
+                        ? registReadOnlyGenericIdBuilder.InterceptedBy(
+                            typeof(AsyncInterceptorAdapter<>).MakeGenericType(interceptorType))
+                        : registReadOnlyGenericIdBuilder.InterceptedBy(interceptorType);
 
                     if (!crudEnabled)
                     {
                         registCrudBuilder = registCrudBuilder.EnableInterfaceInterceptors();
+                        registCrudGenericIdBuilder = registCrudGenericIdBuilder.EnableInterfaceInterceptors();
                         crudEnabled = true;
                     }
 
                     if (!readEnabled)
                     {
                         registReadOnlyBuilder = registCrudBuilder.EnableInterfaceInterceptors();
+                        registReadOnlyGenericIdBuilder = registReadOnlyGenericIdBuilder.EnableInterfaceInterceptors();
                         readEnabled = true;
                     }
 
@@ -141,9 +183,14 @@ public static class DependancyInjectionExtensions
                         ? registCrudBuilder.InterceptedBy(
                             typeof(AsyncInterceptorAdapter<>).MakeGenericType(interceptorType))
                         : registCrudBuilder.InterceptedBy(interceptorType);
+                    registCrudGenericIdBuilder = interceptorType.GetInterfaces().Any(x => x == typeof(IAsyncInterceptor))
+                        ? registCrudGenericIdBuilder.InterceptedBy(
+                            typeof(AsyncInterceptorAdapter<>).MakeGenericType(interceptorType))
+                        : registCrudGenericIdBuilder.InterceptedBy(interceptorType);
                     if (!crudEnabled)
                     {
                         registCrudBuilder = registCrudBuilder.EnableInterfaceInterceptors();
+                        registCrudGenericIdBuilder = registCrudGenericIdBuilder.EnableInterfaceInterceptors();
                         crudEnabled = true;
                     }
 
@@ -153,9 +200,14 @@ public static class DependancyInjectionExtensions
                         ? registReadOnlyBuilder.InterceptedBy(
                             typeof(AsyncInterceptorAdapter<>).MakeGenericType(interceptorType))
                         : registReadOnlyBuilder.InterceptedBy(interceptorType);
+                    registReadOnlyGenericIdBuilder = interceptorType.GetInterfaces().Any(x => x == typeof(IAsyncInterceptor))
+                        ? registReadOnlyGenericIdBuilder.InterceptedBy(
+                            typeof(AsyncInterceptorAdapter<>).MakeGenericType(interceptorType))
+                        : registReadOnlyGenericIdBuilder.InterceptedBy(interceptorType);
                     if (!readEnabled)
                     {
                         registReadOnlyBuilder = registCrudBuilder.EnableInterfaceInterceptors();
+                        registReadOnlyGenericIdBuilder = registReadOnlyGenericIdBuilder.EnableInterfaceInterceptors();
                         readEnabled = true;
                     }
 
@@ -165,7 +217,7 @@ public static class DependancyInjectionExtensions
             }
         }
 
-        var excluded = new[] { typeof(IDataServiceBase<>), typeof(EfCoreDataServiceBase<>), typeof(CrudDataService<,>), typeof(ReadOnlyDataService<,>) };
+        var excluded = new[] { typeof(IDataServiceBase<>), typeof(EfCoreDataServiceBase<>), typeof(CrudDataService<,>), typeof(ReadOnlyDataService<,>), typeof(CrudDataService<,,>), typeof(ReadOnlyDataService<,,>) };
 
         foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
         {
@@ -279,7 +331,7 @@ public static class DependancyInjectionExtensions
                         registrationBuilder = registrationBuilder?.InstancePerLifetimeScope();
                         registrationGenericBuilder = registrationGenericBuilder?.InstancePerLifetimeScope();
                         break;
-                    case Lifetime.InstancePerDependancy:
+                    case Lifetime.InstancePerDependency:
                         registrationBuilder = registrationBuilder?.InstancePerDependency();
                         registrationGenericBuilder = registrationGenericBuilder?.InstancePerDependency();
                         break;

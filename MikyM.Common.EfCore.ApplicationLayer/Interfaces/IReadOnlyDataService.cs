@@ -1,5 +1,4 @@
 ﻿using System.Linq.Expressions;
-using MikyM.Common.Domain.Entities.Base;
 using MikyM.Common.EfCore.DataAccessLayer.Context;
 using MikyM.Common.EfCore.DataAccessLayer.Specifications;
 using MikyM.Common.Utilities.Results;
@@ -9,11 +8,14 @@ namespace MikyM.Common.EfCore.ApplicationLayer.Interfaces;
 /// <summary>
 /// Read-only data service.
 /// </summary>
-/// <typeparam name="TEntity">Type of the entity to create the service for, must derive from <see cref="AggregateRootEntity"/>.</typeparam>
+/// <typeparam name="TEntity">Type of the entity to create the service for, must derive from <see cref="IEntity{TId}"/>.</typeparam>
 /// <typeparam name="TContext">Type of the <see cref="DbContext"/> to use.</typeparam>
+/// <typeparam name="TId">Type of the Id of the entity.</typeparam>
 [PublicAPI]
-public interface IReadOnlyDataService<TEntity, TContext> : IEfCoreDataServiceBase<TContext>
-    where TEntity : class, IAggregateRootEntity where TContext : class, IEfDbContext
+public interface IReadOnlyDataService<TEntity, TId, TContext> : IEfCoreDataServiceBase<TContext>
+    where TEntity : class, IEntity<TId>
+    where TContext : class, IEfDbContext
+    where TId : IComparable, IEquatable<TId>, IComparable<TId>
 {
     /// <summary>
     /// Gets an entity based on given primary key values.
@@ -28,7 +30,8 @@ public interface IReadOnlyDataService<TEntity, TContext> : IEfCoreDataServiceBas
     /// <param name="shouldProject">Whether to use AutoMappers ProjectTo method.</param>
     /// <param name="keyValues">Primary key values.</param>
     /// <returns><see cref="Result"/> containing the result of this operation, with the found entity if any.</returns>
-    Task<Result<TGetResult>> GetAsync<TGetResult>(bool shouldProject = false, params object[] keyValues) where TGetResult : class;
+    Task<Result<TGetResult>> GetAsync<TGetResult>(bool shouldProject = false, params object[] keyValues)
+        where TGetResult : class;
 
     /// <summary>
     /// Gets an entity based on given <see cref="ISpecification"/>.
@@ -95,18 +98,29 @@ public interface IReadOnlyDataService<TEntity, TContext> : IEfCoreDataServiceBas
     /// </summary>
     /// <returns><see cref="Result"/> with <see cref="IReadOnlyList{T}"/> containing the result of this operation.</returns>
     Task<Result<long>> LongCountAsync(ISpecification<TEntity>? specification = null);
-    
+
     /// <summary>
     /// Asynchronously determines whether any elements satisfy the condition.
     /// </summary>
     /// <param name="predicate">Predicate for the query.</param>
     /// <returns>True if any elements in the source sequence satisfy the condition, otherwise false.</returns>
-    Task<Result<bool>> AnyAsync(Expression<Func<TEntity,bool>> predicate);
-    
+    Task<Result<bool>> AnyAsync(Expression<Func<TEntity, bool>> predicate);
+
     /// <summary>
     /// Asynchronously determines whether any elements satisfy the condition.
     /// </summary>
     /// <param name="specification">Specification for the query.</param>
     /// <returns>True if any elements in the source sequence satisfy the condition, otherwise false.</returns>
     Task<Result<bool>> AnyAsync(ISpecification<TEntity> specification);
+}
+
+/// <summary>
+/// Read-only data service.
+/// </summary>
+/// <typeparam name="TEntity">Type of the entity to create the service for, must derive from <see cref="IEntity{TId}"/>.</typeparam>
+/// <typeparam name="TContext">Type of the <see cref="DbContext"/> to use.</typeparam>
+[PublicAPI]
+public interface IReadOnlyDataService<TEntity, TContext> : IReadOnlyDataService<TEntity, long, TContext>
+    where TEntity : class, IEntity<long> where TContext : class, IEfDbContext
+{
 }
