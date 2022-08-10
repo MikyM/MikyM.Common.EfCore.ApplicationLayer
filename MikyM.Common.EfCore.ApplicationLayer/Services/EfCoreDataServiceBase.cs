@@ -34,27 +34,27 @@ public abstract class EfCoreDataServiceBase<TContext> : IEfCoreDataServiceBase<T
     }
 
     /// <inheritdoc />
-    public virtual async Task<Result> CommitAsync(string auditUserId)
+    public virtual async Task<Result> CommitAsync(string auditUserId, CancellationToken cancellationToken = default)
         => await ExToResultWrapAsync(async () => await UnitOfWork.CommitAsync(auditUserId).ConfigureAwait(false));
 
     /// <inheritdoc />
-    public virtual async Task<Result> CommitAsync()
+    public virtual async Task<Result> CommitAsync(CancellationToken cancellationToken = default)
         => await ExToResultWrapAsync(async () => await UnitOfWork.CommitAsync().ConfigureAwait(false));
 
     /// <inheritdoc />
-    public virtual async Task<Result<int>> CommitWithCountAsync(string auditUserId)
+    public virtual async Task<Result<int>> CommitWithCountAsync(string auditUserId, CancellationToken cancellationToken = default)
         => await ExToResultWrapAsync(async () => await UnitOfWork.CommitWithCountAsync(auditUserId).ConfigureAwait(false));
 
     /// <inheritdoc />
-    public virtual async Task<Result<int>> CommitWithCountAsync()
+    public virtual async Task<Result<int>> CommitWithCountAsync(CancellationToken cancellationToken = default)
         => await ExToResultWrapAsync(async () => await UnitOfWork.CommitWithCountAsync().ConfigureAwait(false));
 
     /// <inheritdoc />
-    public virtual async Task<Result> RollbackAsync()
+    public virtual async Task<Result> RollbackAsync(CancellationToken cancellationToken = default)
         => await ExToResultWrapAsync(async () => await UnitOfWork.RollbackAsync().ConfigureAwait(false));
 
     /// <inheritdoc />
-    public virtual async Task<Result> BeginTransactionAsync()
+    public virtual async Task<Result> BeginTransactionAsync(CancellationToken cancellationToken = default)
         => await ExToResultWrapAsync(async () => await UnitOfWork.UseTransactionAsync().ConfigureAwait(false));
 
     /// <inheritdoc />

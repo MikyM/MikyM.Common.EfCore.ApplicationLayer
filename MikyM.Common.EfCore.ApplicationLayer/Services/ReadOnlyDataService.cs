@@ -40,22 +40,8 @@ public class ReadOnlyDataService<TEntity, TId, TContext> : EfCoreDataServiceBase
         (IReadOnlyRepository<TEntity,TId>)BaseRepository;
 
     /// <inheritdoc />
-    public virtual async Task<Result<TGetResult>> GetAsync<TGetResult>(bool shouldProject = false, params object[] keyValues) where TGetResult : class
-    {
-        try
-        {
-            var res = await GetAsync(keyValues).ConfigureAwait(false);
-            return !res.IsDefined() ? Result<TGetResult>.FromError(res) : Mapper.Map<TGetResult>(res.Entity);
-        }
-        catch (Exception ex)
-        {
-            return new ExceptionError(ex);
-        }
-    }
-
-    /// <inheritdoc />
     public virtual async Task<Result<TEntity>> GetAsync(params object[] keyValues)
-    {       
+    {
         try
         {
             var entity = await ReadOnlyRepository.GetAsync(keyValues).ConfigureAwait(false);
@@ -68,11 +54,28 @@ public class ReadOnlyDataService<TEntity, TId, TContext> : EfCoreDataServiceBase
     }
 
     /// <inheritdoc />
-    public virtual async Task<Result<TEntity>> GetSingleBySpecAsync(ISpecification<TEntity> specification)
-    {
+    public virtual async Task<Result<TGetResult>> GetAsync<TGetResult>(object?[]? keyValues, CancellationToken cancellationToken = default) where TGetResult : class
+    {       
         try
         {
-            var entity = await ReadOnlyRepository.GetSingleBySpecAsync(specification);
+            var entity = await ReadOnlyRepository.GetAsync(keyValues, cancellationToken).ConfigureAwait(false);
+            if (entity is null)
+                return new NotFoundError();
+            
+            return Mapper.Map<TGetResult>(entity);
+        }
+        catch (Exception ex)
+        {
+            return new ExceptionError(ex);
+        }
+    }
+
+    /// <inheritdoc />
+    public virtual async Task<Result<TEntity>> GetAsync(object?[]? keyValues, CancellationToken cancellationToken)
+    {       
+        try
+        {
+            var entity = await ReadOnlyRepository.GetAsync(keyValues, cancellationToken).ConfigureAwait(false);
             return entity is null ? new NotFoundError() : entity;
         }
         catch (Exception ex)
@@ -82,11 +85,25 @@ public class ReadOnlyDataService<TEntity, TId, TContext> : EfCoreDataServiceBase
     }
 
     /// <inheritdoc />
-    public virtual async Task<Result<TGetResult>> GetSingleBySpecAsync<TGetResult>(ISpecification<TEntity> specification) where TGetResult : class
+    public virtual async Task<Result<TEntity>> GetSingleBySpecAsync(ISpecification<TEntity> specification, CancellationToken cancellationToken = default)
     {
         try
         {
-            var res = await GetSingleBySpecAsync(specification).ConfigureAwait(false);
+            var entity = await ReadOnlyRepository.GetSingleBySpecAsync(specification, cancellationToken);
+            return entity is null ? new NotFoundError() : entity;
+        }
+        catch (Exception ex)
+        {
+            return new ExceptionError(ex);
+        }
+    }
+
+    /// <inheritdoc />
+    public virtual async Task<Result<TGetResult>> GetSingleBySpecAsync<TGetResult>(ISpecification<TEntity> specification, CancellationToken cancellationToken = default) where TGetResult : class
+    {
+        try
+        {
+            var res = await GetSingleBySpecAsync(specification, cancellationToken).ConfigureAwait(false);
             return !res.IsDefined(out var entity) ? Result<TGetResult>.FromError(res) : Mapper.Map<TGetResult>(entity);
         }
         catch (Exception ex)
@@ -97,11 +114,11 @@ public class ReadOnlyDataService<TEntity, TId, TContext> : EfCoreDataServiceBase
 
     /// <inheritdoc />
     public virtual async Task<Result<TGetProjectedResult>> GetSingleBySpecAsync<TGetProjectedResult>(
-        ISpecification<TEntity, TGetProjectedResult> specification) where TGetProjectedResult : class
+        ISpecification<TEntity, TGetProjectedResult> specification, CancellationToken cancellationToken = default) where TGetProjectedResult : class
     {
         try
         {
-            var entity = await ReadOnlyRepository.GetSingleBySpecAsync(specification).ConfigureAwait(false);
+            var entity = await ReadOnlyRepository.GetSingleBySpecAsync(specification, cancellationToken).ConfigureAwait(false);
             return entity is null ? new NotFoundError() : entity;
         }
         catch (Exception ex)
@@ -111,17 +128,17 @@ public class ReadOnlyDataService<TEntity, TId, TContext> : EfCoreDataServiceBase
     }
 
     /// <inheritdoc />
-    public virtual async Task<Result<IReadOnlyList<TEntity>>> GetBySpecAsync(ISpecification<TEntity> specification)
+    public virtual async Task<Result<IReadOnlyList<TEntity>>> GetBySpecAsync(ISpecification<TEntity> specification, CancellationToken cancellationToken = default)
         => await ExToResultWrapAsync(async () =>
-            await ReadOnlyRepository.GetBySpecAsync(specification).ConfigureAwait(false));
+            await ReadOnlyRepository.GetBySpecAsync(specification, cancellationToken).ConfigureAwait(false));
 
     /// <inheritdoc />
     public virtual async Task<Result<IReadOnlyList<TGetResult>>> GetBySpecAsync<TGetResult>(
-        ISpecification<TEntity> specification) where TGetResult : class
+        ISpecification<TEntity> specification, CancellationToken cancellationToken = default) where TGetResult : class
     {
         try
         {
-            var res = await GetBySpecAsync(specification);
+            var res = await GetBySpecAsync(specification, cancellationToken);
             return !res.IsDefined(out var def)
                 ? Result<IReadOnlyList<TGetResult>>.FromError(res)
                 : Result<IReadOnlyList<TGetResult>>.FromSuccess(Mapper.Map<IReadOnlyList<TGetResult>>(def));
@@ -134,39 +151,47 @@ public class ReadOnlyDataService<TEntity, TId, TContext> : EfCoreDataServiceBase
 
     /// <inheritdoc />
     public virtual async Task<Result<IReadOnlyList<TGetProjectedResult>>> GetBySpecAsync<TGetProjectedResult>(
-        ISpecification<TEntity, TGetProjectedResult> specification) where TGetProjectedResult : class
-        => await ExToResultWrapAsync(async () => await ReadOnlyRepository.GetBySpecAsync(specification).ConfigureAwait(false));
+        ISpecification<TEntity, TGetProjectedResult> specification, CancellationToken cancellationToken = default) where TGetProjectedResult : class
+        => await ExToResultWrapAsync(async () => await ReadOnlyRepository.GetBySpecAsync(specification, cancellationToken).ConfigureAwait(false));
 
     /// <inheritdoc />
-    public virtual async Task<Result<IReadOnlyList<TGetResult>>> GetAllAsync<TGetResult>(bool shouldProject = false)
+    public virtual async Task<Result<IReadOnlyList<TGetResult>>> GetAllAsync<TGetResult>(bool shouldProject = false,
+        CancellationToken cancellationToken = default)
         where TGetResult : class
-        => await ExToResultWrapAsync(async () =>
+    {
+        try
         {
-            IReadOnlyList<TGetResult> res;
             if (shouldProject)
-                res = await ReadOnlyRepository.GetAllAsync<TGetResult>().ConfigureAwait(false);
-            else
-                res = Mapper.Map<IReadOnlyList<TGetResult>>(
-                    await ReadOnlyRepository.GetAllAsync().ConfigureAwait(false));
+                return Result<IReadOnlyList<TGetResult>>.FromSuccess(await ReadOnlyRepository.GetAllAsync<TGetResult>(cancellationToken).ConfigureAwait(false));
 
-            return res;
-        });
-
-    /// <inheritdoc />
-    public virtual async Task<Result<IReadOnlyList<TEntity>>> GetAllAsync()
-        => await ExToResultWrapAsync(async () => await ReadOnlyRepository.GetAllAsync().ConfigureAwait(false));
-
-    /// <inheritdoc />
-    public virtual async Task<Result<long>> LongCountAsync(ISpecification<TEntity>? specification = null)
-        => await ExToResultWrapAsync(async () => await ReadOnlyRepository.LongCountAsync(specification).ConfigureAwait(false));
+            return Result<IReadOnlyList<TGetResult>>.FromSuccess(Mapper.Map<IReadOnlyList<TGetResult>>(
+                await ReadOnlyRepository.GetAllAsync(cancellationToken).ConfigureAwait(false)));
+        }
+        catch (Exception ex)
+        {
+            return new ExceptionError(ex);
+        }
+    }
 
     /// <inheritdoc />
-    public async Task<Result<bool>> AnyAsync(Expression<Func<TEntity, bool>> predicate)
-        => await ExToResultWrapAsync(async () => await ReadOnlyRepository.AnyAsync(predicate).ConfigureAwait(false));
+    public virtual async Task<Result<IReadOnlyList<TEntity>>> GetAllAsync(CancellationToken cancellationToken = default)
+        => await ExToResultWrapAsync(async () => await ReadOnlyRepository.GetAllAsync(cancellationToken).ConfigureAwait(false));
+    
+    /// <inheritdoc />
+    public virtual async Task<Result<long>> LongCountAsync(ISpecification<TEntity> specification, CancellationToken cancellationToken = default)
+        => await ExToResultWrapAsync(async () => await ReadOnlyRepository.LongCountAsync(specification, cancellationToken).ConfigureAwait(false));
+    
+    /// <inheritdoc />
+    public virtual async Task<Result<long>> LongCountAsync(CancellationToken cancellationToken = default)
+        => await ExToResultWrapAsync(async () => await ReadOnlyRepository.LongCountAsync(cancellationToken).ConfigureAwait(false));
 
     /// <inheritdoc />
-    public async Task<Result<bool>> AnyAsync(ISpecification<TEntity> specification)
-        => await ExToResultWrapAsync(async () => await ReadOnlyRepository.AnyAsync(specification).ConfigureAwait(false));
+    public async Task<Result<bool>> AnyAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken = default)
+        => await ExToResultWrapAsync(async () => await ReadOnlyRepository.AnyAsync(predicate, cancellationToken).ConfigureAwait(false));
+
+    /// <inheritdoc />
+    public async Task<Result<bool>> AnyAsync(ISpecification<TEntity> specification, CancellationToken cancellationToken = default)
+        => await ExToResultWrapAsync(async () => await ReadOnlyRepository.AnyAsync(specification, cancellationToken).ConfigureAwait(false));
 }
 
 /// <summary>

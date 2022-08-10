@@ -7,6 +7,7 @@ namespace MikyM.Common.EfCore.ApplicationLayer.Pagination;
 /// <summary>
 /// Defines a response paginator.
 /// </summary>
+[PublicAPI]
 public interface IResponsePaginator
 {
     /// <summary>
@@ -25,6 +26,7 @@ public interface IResponsePaginator
 /// <summary>
 /// Response paginator.
 /// </summary>
+[PublicAPI]
 public class ResponsePaginator : IResponsePaginator
 {
     private readonly IUriService _uriService;

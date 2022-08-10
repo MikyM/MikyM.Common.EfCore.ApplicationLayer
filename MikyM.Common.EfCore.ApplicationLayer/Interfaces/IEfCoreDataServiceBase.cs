@@ -9,7 +9,8 @@ namespace MikyM.Common.EfCore.ApplicationLayer.Interfaces;
 /// Base data service for Entity Framework Core.
 /// </summary>
 /// <typeparam name="TContext">Type that derives from <see cref="DbContext"/>.</typeparam>
-public interface IEfCoreDataServiceBase<TContext> : IDataServiceBase<TContext> where TContext : class, IEfDbContext
+[PublicAPI]
+public interface IEfCoreDataServiceBase<out TContext> : IDataServiceBase<TContext> where TContext : class, IEfDbContext
 {
     /// <summary>
     /// Mapper.
@@ -23,13 +24,13 @@ public interface IEfCoreDataServiceBase<TContext> : IDataServiceBase<TContext> w
     /// Begins a transaction.
     /// </summary>
     /// <returns>Task with a <see cref="Result"/> representing the async operation.</returns>
-    Task<Result> BeginTransactionAsync();
+    Task<Result> BeginTransactionAsync(CancellationToken cancellationToken = default);
 
     /// <inheritdoc cref="IDataServiceBase{TContext}.CommitAsync(string)"/>
     /// <returns>Number of affected rows.</returns>
-    Task<Result<int>> CommitWithCountAsync(string auditUserId);
+    Task<Result<int>> CommitWithCountAsync(string auditUserId, CancellationToken cancellationToken = default);
 
     /// <inheritdoc cref="IDataServiceBase{TContext}.CommitAsync()"/>
     /// <returns>Number of affected rows.</returns>
-    Task<Result<int>> CommitWithCountAsync();
+    Task<Result<int>> CommitWithCountAsync(CancellationToken cancellationToken = default);
 }
