@@ -100,7 +100,7 @@ public interface IReadOnlyDataService<TEntity, TId, out TContext> : IEfCoreDataS
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <param name="shouldProject">Whether to use AutoMappers ProjectTo method.</param>
     /// <returns><see cref="Result"/> with <see cref="IReadOnlyList{T}"/> containing the result of this operation, with the found entities if any.</returns>
-    Task<Result<IReadOnlyList<TGetResult>>> GetAllAsync<TGetResult>(bool shouldProject, CancellationToken cancellationToken = default)
+    Task<Result<IReadOnlyList<TGetResult>>> GetAllAsync<TGetResult>(bool shouldProject = false, CancellationToken cancellationToken = default)
         where TGetResult : class;
 
     /// <summary>
@@ -113,6 +113,7 @@ public interface IReadOnlyDataService<TEntity, TId, out TContext> : IEfCoreDataS
     /// <summary>
     /// Counts the entities with optional query parameters set by passing a <see cref="ISpecification{T}"/>.
     /// </summary>
+    /// <param name="specification">Specification with query settings.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns><see cref="Result"/> with <see cref="IReadOnlyList{T}"/> containing the result of this operation.</returns>
     Task<Result<long>> LongCountAsync(ISpecification<TEntity> specification, CancellationToken cancellationToken = default);
