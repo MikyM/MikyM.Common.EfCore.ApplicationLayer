@@ -21,7 +21,7 @@ public interface ICrudDataService<TEntity, TId, out TContext> : IReadOnlyDataSer
     /// <param name="userId">Optional Id of the user that is responsible for the changes</param>
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns><see cref="Result"/> with the Id of the newly created entity</returns>
-    Task<Result<TId?>> AddAsync<TPost>(TPost entry, bool shouldSave = false, string? userId = null, CancellationToken cancellationToken = default)
+    Task<Result<TId?>> AddAsync<TPost>(TPost entry, bool shouldSave, string? userId, CancellationToken cancellationToken = default)
         where TPost : class;
     
     /// <summary>
@@ -44,8 +44,8 @@ public interface ICrudDataService<TEntity, TId, out TContext> : IReadOnlyDataSer
     /// <param name="userId">Optional Id of the user that is responsible for the changes</param>
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns><see cref="Result"/> with <see cref="IEnumerable{T}"/> containing Ids of the newly created entities</returns>
-    Task<Result<IReadOnlyList<TId>>> AddRangeAsync<TPost>(IEnumerable<TPost> entries, bool shouldSave = false,
-        string? userId = null, CancellationToken cancellationToken = default) where TPost : class;
+    Task<Result<IReadOnlyList<TId>>> AddRangeAsync<TPost>(IEnumerable<TPost> entries, bool shouldSave,
+        string? userId, CancellationToken cancellationToken = default) where TPost : class;
     
     /// <summary>
     /// Adds a range of entries.
@@ -85,7 +85,7 @@ public interface ICrudDataService<TEntity, TId, out TContext> : IReadOnlyDataSer
     /// <param name="userId">Optional Id of the user that is responsible for the changes</param>
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns><see cref="Result"/> of the operation</returns>
-    Task<Result> DeleteAsync<TDelete>(TDelete entry, bool shouldSave = false, string? userId = null, CancellationToken cancellationToken = default)
+    Task<Result> DeleteAsync<TDelete>(TDelete entry, bool shouldSave, string? userId, CancellationToken cancellationToken = default)
         where TDelete : class;
     
     /// <summary>
@@ -107,7 +107,7 @@ public interface ICrudDataService<TEntity, TId, out TContext> : IReadOnlyDataSer
     /// <param name="userId">Optional Id of the user that is responsible for the changes</param>
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns><see cref="Result"/> of the operation</returns>
-    Task<Result> DeleteAsync(TId id, bool shouldSave = false, string? userId = null, CancellationToken cancellationToken = default);
+    Task<Result> DeleteAsync(TId id, bool shouldSave, string? userId, CancellationToken cancellationToken = default);
     
     /// <summary>
     /// Deletes an entity.
@@ -126,7 +126,7 @@ public interface ICrudDataService<TEntity, TId, out TContext> : IReadOnlyDataSer
     /// <param name="userId">Optional Id of the user that is responsible for the changes</param>
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns><see cref="Result"/> of the operation</returns>
-    Task<Result> DeleteRangeAsync<TDelete>(IEnumerable<TDelete> entries, bool shouldSave = false, string? userId = null, CancellationToken cancellationToken = default)
+    Task<Result> DeleteRangeAsync<TDelete>(IEnumerable<TDelete> entries, bool shouldSave, string? userId, CancellationToken cancellationToken = default)
         where TDelete : class;
     
     /// <summary>
@@ -147,7 +147,7 @@ public interface ICrudDataService<TEntity, TId, out TContext> : IReadOnlyDataSer
     /// <param name="userId">Optional Id of the user that is responsible for the changes</param>
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns><see cref="Result"/> of the operation</returns>
-    Task<Result> DeleteRangeAsync(IEnumerable<TId> ids, bool shouldSave = false, string? userId = null, CancellationToken cancellationToken = default);
+    Task<Result> DeleteRangeAsync(IEnumerable<TId> ids, bool shouldSave, string? userId, CancellationToken cancellationToken = default);
     
     /// <summary>
     /// Deletes a range of entities.
@@ -167,7 +167,7 @@ public interface ICrudDataService<TEntity, TId, out TContext> : IReadOnlyDataSer
     /// <param name="userId">Optional Id of the user that is responsible for the changes</param>
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns><see cref="Result"/> of the operation</returns>
-    Task<Result> DisableAsync<TDisable>(TDisable entry, bool shouldSave = false, string? userId = null, CancellationToken cancellationToken = default)
+    Task<Result> DisableAsync<TDisable>(TDisable entry, bool shouldSave, string? userId, CancellationToken cancellationToken = default)
         where TDisable : class;
     
     /// <summary>
@@ -189,7 +189,7 @@ public interface ICrudDataService<TEntity, TId, out TContext> : IReadOnlyDataSer
     /// <param name="userId">Optional Id of the user that is responsible for the changes</param>
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns><see cref="Result"/> of the operation</returns>
-    Task<Result> DisableAsync(TId id, bool shouldSave = false, string? userId = null, CancellationToken cancellationToken = default);
+    Task<Result> DisableAsync(TId id, bool shouldSave, string? userId, CancellationToken cancellationToken = default);
     
     /// <summary>
     /// Disables an entity.
@@ -209,8 +209,8 @@ public interface ICrudDataService<TEntity, TId, out TContext> : IReadOnlyDataSer
     /// <param name="userId">Optional Id of the user that is responsible for the changes</param>
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns><see cref="Result"/> of the operation</returns>
-    Task<Result> DisableRangeAsync<TDisable>(IEnumerable<TDisable> entries, bool shouldSave = false,
-        string? userId = null, CancellationToken cancellationToken = default) where TDisable : class;
+    Task<Result> DisableRangeAsync<TDisable>(IEnumerable<TDisable> entries, bool shouldSave,
+        string? userId, CancellationToken cancellationToken = default) where TDisable : class;
     
     /// <summary>
     /// Disables a range of entities.
@@ -231,7 +231,7 @@ public interface ICrudDataService<TEntity, TId, out TContext> : IReadOnlyDataSer
     /// <param name="userId">Optional Id of the user that is responsible for the changes</param>
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns><see cref="Result"/> of the operation</returns>
-    Task<Result> DisableRangeAsync(IEnumerable<TId> ids, bool shouldSave = false, string? userId = null, CancellationToken cancellationToken = default);
+    Task<Result> DisableRangeAsync(IEnumerable<TId> ids, bool shouldSave, string? userId, CancellationToken cancellationToken = default);
     
     /// <summary>
     /// Disables a range of entities.
