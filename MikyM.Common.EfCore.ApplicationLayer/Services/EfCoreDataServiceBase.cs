@@ -35,27 +35,27 @@ public abstract class EfCoreDataServiceBase<TContext> : IEfCoreDataServiceBase<T
 
     /// <inheritdoc />
     public virtual async Task<Result> CommitAsync(string auditUserId, CancellationToken cancellationToken = default)
-        => await ExToResultWrapAsync(async () => await UnitOfWork.CommitAsync(auditUserId).ConfigureAwait(false));
+        => await ExToResultWrapAsync(async () => await UnitOfWork.CommitAsync(auditUserId, cancellationToken).ConfigureAwait(false));
 
     /// <inheritdoc />
     public virtual async Task<Result> CommitAsync(CancellationToken cancellationToken = default)
-        => await ExToResultWrapAsync(async () => await UnitOfWork.CommitAsync().ConfigureAwait(false));
+        => await ExToResultWrapAsync(async () => await UnitOfWork.CommitAsync(cancellationToken).ConfigureAwait(false));
 
     /// <inheritdoc />
     public virtual async Task<Result<int>> CommitWithCountAsync(string auditUserId, CancellationToken cancellationToken = default)
-        => await ExToResultWrapAsync(async () => await UnitOfWork.CommitWithCountAsync(auditUserId).ConfigureAwait(false));
+        => await ExToResultWrapAsync(async () => await UnitOfWork.CommitWithCountAsync(auditUserId, cancellationToken).ConfigureAwait(false));
 
     /// <inheritdoc />
     public virtual async Task<Result<int>> CommitWithCountAsync(CancellationToken cancellationToken = default)
-        => await ExToResultWrapAsync(async () => await UnitOfWork.CommitWithCountAsync().ConfigureAwait(false));
+        => await ExToResultWrapAsync(async () => await UnitOfWork.CommitWithCountAsync(cancellationToken).ConfigureAwait(false));
 
     /// <inheritdoc />
     public virtual async Task<Result> RollbackAsync(CancellationToken cancellationToken = default)
-        => await ExToResultWrapAsync(async () => await UnitOfWork.RollbackAsync().ConfigureAwait(false));
+        => await ExToResultWrapAsync(async () => await UnitOfWork.RollbackAsync(cancellationToken).ConfigureAwait(false));
 
     /// <inheritdoc />
     public virtual async Task<Result> BeginTransactionAsync(CancellationToken cancellationToken = default)
-        => await ExToResultWrapAsync(async () => await UnitOfWork.UseTransactionAsync().ConfigureAwait(false));
+        => await ExToResultWrapAsync(async () => await UnitOfWork.UseTransactionAsync(cancellationToken).ConfigureAwait(false));
 
     /// <inheritdoc />
     public TContext Context => UnitOfWork.Context;

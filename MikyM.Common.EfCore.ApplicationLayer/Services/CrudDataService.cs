@@ -16,7 +16,7 @@ namespace MikyM.Common.EfCore.ApplicationLayer.Services;
 [PublicAPI]
 public class CrudDataService<TEntity, TId, TContext> : ReadOnlyDataService<TEntity, TId, TContext>,
     ICrudDataService<TEntity, TId, TContext>
-    where TEntity : class, IEntity<TId>
+    where TEntity : Entity<TId>
     where TContext : class, IEfDbContext
     where TId : IComparable, IEquatable<TId>, IComparable<TId>
 {
@@ -35,7 +35,7 @@ public class CrudDataService<TEntity, TId, TContext> : ReadOnlyDataService<TEnti
     /// <summary>
     /// Gets the CRUD version of the <see cref="BaseRepository"/> (essentially casts it for you).
     /// </summary>
-    protected IRepository<TEntity, TId> Repository => (IRepository<TEntity, TId>)BaseRepository;
+    protected virtual IRepository<TEntity, TId> Repository => (IRepository<TEntity, TId>)BaseRepository;
 
     /// <inheritdoc />
     public virtual async Task<Result<TId?>> AddAsync<TPost>(TPost entry, bool shouldSave = false,
@@ -473,7 +473,7 @@ public class CrudDataService<TEntity, TId, TContext> : ReadOnlyDataService<TEnti
 /// <inheritdoc cref="ICrudDataService{TEntity,TContext}"/>
 [PublicAPI]
 public class CrudDataService<TEntity, TContext> : CrudDataService<TEntity, long, TContext>, ICrudDataService<TEntity, TContext>
-    where TEntity : class, IEntity<long> where TContext : class, IEfDbContext
+    where TEntity : Entity<long> where TContext : class, IEfDbContext
 {
     /// <summary>
     /// Creates a new instance of <see cref="CrudDataService{TEntity,TContext}"/>.
@@ -483,4 +483,7 @@ public class CrudDataService<TEntity, TContext> : CrudDataService<TEntity, long,
     public CrudDataService(IMapper mapper, IUnitOfWork<TContext> uof) : base(mapper, uof)
     {
     }
+    
+    /// <inheritdoc />
+    protected override IRepositoryBase BaseRepository => UnitOfWork.GetRepository<IRepository<TEntity>>();
 }
