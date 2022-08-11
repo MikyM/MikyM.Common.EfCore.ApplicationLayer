@@ -488,7 +488,12 @@ public class CrudDataService<TEntity, TContext> : CrudDataService<TEntity, long,
     internal override IRepositoryBase BaseRepositoryInternal => UnitOfWork.GetRepository<IRepository<TEntity>>();
     
     /// <summary>
-    /// Gets the CRUD version of the <see cref="BaseRepositoryInternal"/> (essentially casts it for you).
+    /// Gets the CRUD version of the <see cref="ReadOnlyDataService{TEntity,TId,TContext}.BaseRepository"/> (essentially casts it for you).
     /// </summary>
     protected new IRepository<TEntity> Repository => (IRepository<TEntity>)BaseRepository;
+    
+    /// <summary>
+    /// Gets the read-only version of the <see cref="ReadOnlyDataService{TEntity,TId,TContext}.BaseRepository"/> (essentially casts it for you).
+    /// </summary>
+    protected new IReadOnlyRepository<TEntity> ReadOnlyRepository => (IReadOnlyRepository<TEntity>)BaseRepository;
 }

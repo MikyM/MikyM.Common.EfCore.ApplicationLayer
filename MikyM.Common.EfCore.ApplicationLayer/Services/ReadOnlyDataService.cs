@@ -40,7 +40,7 @@ public class ReadOnlyDataService<TEntity, TId, TContext> : EfCoreDataServiceBase
     protected IRepositoryBase BaseRepository => BaseRepositoryInternal;
     
     /// <summary>
-    /// Gets the read-only version of the <see cref="BaseRepositoryInternal"/> (essentially casts it for you).
+    /// Gets the read-only version of the <see cref="BaseRepository"/> (essentially casts it for you).
     /// </summary>
     protected IReadOnlyRepository<TEntity,TId> ReadOnlyRepository =>
         (IReadOnlyRepository<TEntity,TId>)BaseRepository;
@@ -222,7 +222,7 @@ public class ReadOnlyDataService<TEntity, TContext> : ReadOnlyDataService<TEntit
     internal override IRepositoryBase BaseRepositoryInternal => UnitOfWork.GetRepository<IReadOnlyRepository<TEntity>>();
     
     /// <summary>
-    /// Gets the read-only version of the <see cref="BaseRepositoryInternal"/> (essentially casts it for you).
+    /// Gets the read-only version of the <see cref="ReadOnlyDataService{TEntity,TId,TContext}.BaseRepository"/> (essentially casts it for you).
     /// </summary>
     protected new IReadOnlyRepository<TEntity> ReadOnlyRepository =>
         (IReadOnlyRepository<TEntity>)BaseRepository;
