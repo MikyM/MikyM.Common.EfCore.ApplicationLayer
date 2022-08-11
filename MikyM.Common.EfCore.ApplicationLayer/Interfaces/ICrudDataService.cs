@@ -255,7 +255,7 @@ public interface ICrudDataService<TEntity, TId, out TContext> : IReadOnlyDataSer
 /// CRUD data service.
 /// </summary>
 [PublicAPI]
-public interface ICrudDataService<TEntity, out TContext> : ICrudDataService<TEntity, long, TContext>
+public interface ICrudDataService<TEntity, out TContext> : ICrudDataService<TEntity, long, TContext>, IReadOnlyDataService<TEntity, TContext>
     where TEntity : class, IEntity<long> where TContext : class, IEfDbContext
 {
 }
