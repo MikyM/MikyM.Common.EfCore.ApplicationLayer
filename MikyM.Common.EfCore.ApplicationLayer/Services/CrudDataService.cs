@@ -30,12 +30,12 @@ public class CrudDataService<TEntity, TId, TContext> : ReadOnlyDataService<TEnti
     }
 
     /// <inheritdoc />
-    protected override IRepositoryBase BaseRepository => UnitOfWork.GetRepository<IRepository<TEntity, TId>>();
+    internal override IRepositoryBase BaseRepositoryInternal => UnitOfWork.GetRepository<IRepository<TEntity, TId>>();
 
     /// <summary>
-    /// Gets the CRUD version of the <see cref="BaseRepository"/> (essentially casts it for you).
+    /// Gets the CRUD version of the <see cref="ReadOnlyDataService{TEntity,TId,TContext}.BaseRepository"/> (essentially casts it for you).
     /// </summary>
-    protected virtual IRepository<TEntity, TId> Repository => (IRepository<TEntity, TId>)BaseRepository;
+    protected IRepository<TEntity, TId> Repository => (IRepository<TEntity, TId>)BaseRepository;
 
     /// <inheritdoc />
     public virtual async Task<Result<TId?>> AddAsync<TPost>(TPost entry, bool shouldSave = false,
@@ -485,5 +485,10 @@ public class CrudDataService<TEntity, TContext> : CrudDataService<TEntity, long,
     }
     
     /// <inheritdoc />
-    protected override IRepositoryBase BaseRepository => UnitOfWork.GetRepository<IRepository<TEntity>>();
+    internal override IRepositoryBase BaseRepositoryInternal => UnitOfWork.GetRepository<IRepository<TEntity>>();
+    
+    /// <summary>
+    /// Gets the CRUD version of the <see cref="BaseRepositoryInternal"/> (essentially casts it for you).
+    /// </summary>
+    protected new IRepository<TEntity> Repository => (IRepository<TEntity>)BaseRepository;
 }
